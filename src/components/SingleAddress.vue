@@ -7,7 +7,7 @@
       </va-card-content>
     </va-card>
   </va-inner-loading>
-  <Contract v-if="meta" :client="client" :address="address" :abi="abi" />
+  <Contract v-if="isContract" :client="client" :address="address" :abi="abi"/>
 </template>
 
 <script lang="ts">
@@ -35,25 +35,30 @@ export default {
 
   async setup(props: any) {
 
-    let meta = ref(null);
+    let meta: Ref<any | null> = ref(null);
     let protos: Ref<koinosPbToProto.ProtoDescriptor[] | null> = ref(null)
     const loading = ref(true);
 
     const getContractMeta = async (address: string) => {
       try {
-        console.log(`Asking for ${address}`)
         const {meta: receivedMeta} = await props.client.contractMetaStore.getContractMeta(address);
-        console.log('receivedMeta', receivedMeta);
+
+        if (!receivedMeta) {
+          return;
+        }
+
         meta.value = receivedMeta;
-        const abi = JSON.parse(receivedMeta.abi);
-        const decodedProtos = koinosPbToProto.convert(abi.types);
-        protos.value = decodedProtos;
-        loading.value = false;
+        try {
+          const abi = JSON.parse(receivedMeta.abi);
+          protos.value = koinosPbToProto.convert(abi.types);
+        } catch (e) {
+          console.error(e);
+        }
       } catch (e) {
         console.error(e);
+      } finally {
         loading.value = false;
       }
-
     }
 
     getContractMeta(props.address).then(() => {
@@ -75,7 +80,17 @@ export default {
       isContract: computed(() => meta.value),
       meta,
       // @ts-ignore
-      abi: computed(() => meta.value?.abi ? JSON.parse(meta.value?.abi) : null),
+      abi: computed(() => {
+        if (!meta.value?.abi) {
+          return null;
+        }
+        try {
+          return JSON.parse(meta.value.abi);
+        } catch (e) {
+          console.error(e);
+          return null;
+        }
+      }),
       protos,
       methods,
       loading,

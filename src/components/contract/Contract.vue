@@ -14,7 +14,6 @@
 <script lang="ts">
 import {Client} from "koinos-rpc";
 import MethodsList from "./MethodsList.vue";
-import hljsVuePlugin from "@highlightjs/vue-plugin";
 import {computed} from "vue";
 import * as koinosPbToProto from "@roamin/koinos-pb-to-proto";
 import {ProtoDescriptor} from "@roamin/koinos-pb-to-proto";
@@ -42,7 +41,7 @@ interface Method {
 }
 
 export default {
-  components: {Proto, SingleMethod, MethodsList, highlightjs: hljsVuePlugin.component},
+  components: {Proto, SingleMethod, MethodsList},
   props: {
     client: {
       type: Client,

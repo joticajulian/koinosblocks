@@ -16,7 +16,7 @@
               class="mb-4"
               :label="field.name"
               v-model="arg[field.name]"
-              :placeholder="field.details.options['(koinos.btype)'] == 'ADDRESS' ? 'address' : field.details.type"
+              :placeholder="field?.details?.options && field?.details.options['(koinos.btype)'] == 'ADDRESS' ? 'address' : field.details.type"
           />
         </va-form>
 
@@ -121,7 +121,7 @@ export default {
         try {
           const parse = protobuf.parse(proto.definition);
           const type = parse.root.lookupType(props.details.argument)
-          console.log('fields', type.fields)
+          console.log(type)
           return Object.keys(type.fields).map((name) => {
             return {
               name: name,
