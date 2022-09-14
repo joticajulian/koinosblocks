@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   app:
-    image: registry.gitlab.com/engrave/koinos/koinosblocks:testnet
+    image: registry.gitlab.com/engrave/koinos/koinosblocks:latest
     networks:
       - infrastructure
 
