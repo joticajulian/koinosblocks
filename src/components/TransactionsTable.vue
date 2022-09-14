@@ -21,7 +21,7 @@
             </td>
             <td>{{ transaction.header.rc_limit }}</td>
             <td>
-              <router-link to="walletLink(transaction.header.payer)">
+              <router-link :to="walletLink(transaction.header.payer)">
                 {{ transaction.header.payer }}
               </router-link>
             </td>
