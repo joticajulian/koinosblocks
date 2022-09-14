@@ -1,0 +1,38 @@
+stages:
+  - build
+  - deploy
+
+image: docker:git
+
+services:
+  - docker:dind
+
+build:
+  stage: build
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+  before_script:
+    - echo $CI_JOB_TOKEN | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
+  script:
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+
+deploy:
+  stage: deploy
+  before_script:
+    # Docker TLS certificates
+    - mkdir -p ~/.docker
+    - echo "$CORE_SWARM_TLSCACERT" > ~/.docker/ca.pem
+    - echo "$CORE_SWARM_TLSCERT" > ~/.docker/cert.pem
+    - echo "$CORE_SWARM_TLSKEY" > ~/.docker/key.pem
+    # Login to gitlab docker registry
+    - echo $CORE_DEPLOY_TOKEN_KEY | docker -H $CORE_SWARM_HOST --tlsverify login -u $CORE_DEPLOY_TOKEN_NAME $CI_REGISTRY --password-stdin
+    # Pull all necessary images before deploy
+    - cat docker-compose.stack.yml | grep -oE 'image:([ a-zA-Z0-9\:\/\.-]*)' | sed "s~image:~~g" | while read -r image ; do docker -H $CORE_SWARM_HOST --tlsverify pull $image; done
+  script:
+    - docker -H $CORE_SWARM_HOST --tlsverify stack deploy --with-registry-auth -c docker-compose.stack.yml koinosblocks
+  after_script:
+    - rm -fR ~/.docker
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+  when: manual

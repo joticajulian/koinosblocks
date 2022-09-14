@@ -1,0 +1,11 @@
+version: "3.7"
+services:
+
+  app:
+    image: registry.gitlab.com/engrave/koinos/koinosblocks:testnet
+    networks:
+      - infrastructure
+
+networks:
+  infrastructure:
+    external: true
