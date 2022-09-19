@@ -3,15 +3,15 @@
     <va-card>
       <va-card-title>Head info</va-card-title>
       <va-card-content v-if="topology">
-        <pre>{{JSON.stringify(topology, null, 2)}}</pre>
-<!--        <dl class="row">-->
-<!--          <dt class="flex md6">Id</dt>-->
-<!--          <dd class="flex md6">{{topology?.id}}</dd>-->
-<!--          <dt class="flex md6">Height</dt>-->
-<!--          <dd class="flex md6">{{topology?.height}}</dd>-->
-<!--          <dt class="flex md6">Previous</dt>-->
-<!--          <dd class="flex md6">{{topology?.previous}}</dd>-->
-<!--        </dl>-->
+        <pre>{{ JSON.stringify(topology, null, 2) }}</pre>
+        <!--        <dl class="row">-->
+        <!--          <dt class="flex md6">Id</dt>-->
+        <!--          <dd class="flex md6">{{topology?.id}}</dd>-->
+        <!--          <dt class="flex md6">Height</dt>-->
+        <!--          <dd class="flex md6">{{topology?.height}}</dd>-->
+        <!--          <dt class="flex md6">Previous</dt>-->
+        <!--          <dd class="flex md6">{{topology?.previous}}</dd>-->
+        <!--        </dl>-->
       </va-card-content>
     </va-card>
   </va-inner-loading>
@@ -19,24 +19,18 @@
 
 <script lang="ts">
 import {onBeforeUnmount, Ref, ref} from 'vue'
-import {Client} from 'koinos-rpc'
 import {BlockTopology} from "koinos-rpc/dist/service/Chain";
+import {useClient} from "../composable/useClient";
 
 export default {
-  props: {
-    client: {
-      type: Client,
-      required: true
-    }
-  },
+  async setup() {
 
-  async setup(props: any) {
-
-    let topology: Ref<BlockTopology|null> = ref(null);
+    let topology: Ref<BlockTopology | null> = ref(null);
     const loading = ref(true);
 
     const updateBlocks = async () => {
-      const res = await props.client.blockStore.getHighestBlock();
+      const {client} = useClient();
+      const res = await client.blockStore.getHighestBlock();
       console.log(res.topology);
       topology.value = res.topology;
       loading.value = false;
@@ -44,7 +38,9 @@ export default {
 
     const intervalHandle = setInterval(updateBlocks, 1000);
 
-    onBeforeUnmount(() => { clearInterval(intervalHandle); });
+    onBeforeUnmount(() => {
+      clearInterval(intervalHandle);
+    });
 
     return {
       topology,
@@ -59,6 +55,7 @@ export default {
 a {
   color: #34495e;
 }
+
 a:hover {
   text-decoration: underline;
 }

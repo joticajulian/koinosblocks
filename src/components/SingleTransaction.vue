@@ -12,18 +12,14 @@
 
 <script lang="ts">
 import {ref} from 'vue'
-import {Client} from "koinos-rpc";
 import TransactionsTable from "./TransactionsTable.vue";
 import EventsTable from "./EventsTable.vue";
 import OperationsTable from "./OperationsTable.vue";
+import {useClient} from "../composable/useClient";
 
 export default {
   components: {OperationsTable, EventsTable, TransactionsTable},
   props: {
-    client: {
-      type: Client,
-      required: true
-    },
     txId: {
       type: String,
       required: true
@@ -32,13 +28,15 @@ export default {
 
   async setup(props: any) {
 
+    const {client} = useClient();
+
     let transaction = ref(null);
     let operations = ref(null);
     const loading = ref(true);
 
     const getTransaction = async (txId: number) => {
       console.log('Asking for transaction', txId);
-      const {transactions} = await props.client.transactionStore.getTransactionsById([txId]);
+      const {transactions} = await client.transactionStore.getTransactionsById([txId]);
       console.log(transactions);
       transaction.value = transactions[0]
       operations.value = transactions[0].transaction.operations

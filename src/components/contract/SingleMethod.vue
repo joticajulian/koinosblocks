@@ -36,20 +36,16 @@
 </template>
 
 <script lang="ts">
-import {computed, reactive, Ref, ref, unref, watch} from "vue";
-import {Client} from "koinos-rpc";
+import {computed, reactive, Ref, ref, watch} from "vue";
 import * as protobuf from "protobufjs";
 import {VaButton, VaInput} from "vuestic-ui";
 import base64url from "base64url";
 import {utils} from 'koilib'
+import {useClient} from "../../composable/useClient";
 
 export default {
   components: {VaInput, VaButton},
   props: {
-    client: {
-      type: Client,
-      required: true
-    },
     address: {
       type: String,
       required: true
@@ -137,11 +133,14 @@ export default {
     return {
       readContract: async (argType: string, responseType: string) => {
         try {
+          const {client} = useClient();
+
           res.value = null;
           error.value = null;
+
           console.log("submit", argType, responseType);
 
-          const {result} = await props.client.call('chain', 'read_contract', {
+          const {result} = await client.call('chain', 'read_contract', {
             args: prepareInputArg(argType, {...form}),
             contract_id: props.address,
             entry_point: parseInt(props.details['entry-point'], 16)

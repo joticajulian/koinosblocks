@@ -1,6 +1,6 @@
 <template>
   <Suspense>
-    <SingleBlock :client="client" :height="block" />
+    <SingleBlock :height="block" />
   </Suspense>
 </template>
 
@@ -13,11 +13,6 @@ import {Client} from "koinos-rpc";
 export default {
   name: 'Block',
   components: {SingleBlock},
-  data() {
-    return {
-      client: new Client(["https://api.koinosblocks.com"])
-    }
-  },
   setup() {
     const route = useRoute();
 

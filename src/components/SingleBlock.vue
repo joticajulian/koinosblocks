@@ -25,17 +25,13 @@
 
 <script lang="ts">
 import {ref} from 'vue'
-import {Client} from "koinos-rpc";
 import TransactionsTable from "./TransactionsTable.vue";
 import EventsTable from "./EventsTable.vue";
+import {useClient} from "../composable/useClient";
 
 export default {
   components: {EventsTable, TransactionsTable},
   props: {
-    client: {
-      type: Client,
-      required: true
-    },
     height: {
       type: Number,
       required: true
@@ -44,14 +40,16 @@ export default {
 
   async setup(props: any) {
 
+    const {client} = useClient();
+
     let block_topology = ref(null);
     let transactions = ref([]);
     let events = ref([]);
     const loading = ref(true);
 
     const getBlock = async (height: number) => {
-      const {topology} = await props.client.blockStore.getHighestBlock();
-      const {block_items} = await props.client.blockStore.getBlocksByHeight(topology.id, height, 1);
+      const {topology} = await client.blockStore.getHighestBlock();
+      const {block_items} = await client.blockStore.getBlocksByHeight(topology.id, height, 1);
       console.log(block_items);
       block_topology.value = {
         block_height: block_items[0].block_height,

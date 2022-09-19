@@ -7,26 +7,22 @@
       </va-card-content>
     </va-card>
   </va-inner-loading>
-  <Contract v-if="isContract" :client="client" :address="address" :abi="abi"/>
+  <Contract v-if="isContract" :address="address" :abi="abi"/>
 </template>
 
 <script lang="ts">
 import {computed, Ref, ref} from 'vue'
-import {Client} from "koinos-rpc";
 import TransactionsTable from "./TransactionsTable.vue";
 import EventsTable from "./EventsTable.vue";
 import {Methods} from "../types/Method";
 import MethodsList from "./contract/MethodsList.vue";
 import * as koinosPbToProto from "@roamin/koinos-pb-to-proto";
 import Contract from "./contract/Contract.vue";
+import {useClient} from "../composable/useClient";
 
 export default {
   components: {Contract, MethodsList, EventsTable, TransactionsTable},
   props: {
-    client: {
-      type: Client,
-      required: true
-    },
     address: {
       type: String,
       required: true
@@ -39,9 +35,11 @@ export default {
     let protos: Ref<koinosPbToProto.ProtoDescriptor[] | null> = ref(null)
     const loading = ref(true);
 
+    const {client} = useClient();
+
     const getContractMeta = async (address: string) => {
       try {
-        const {meta: receivedMeta} = await props.client.contractMetaStore.getContractMeta(address);
+        const {meta: receivedMeta} = await client.contractMetaStore.getContractMeta(address);
 
         if (!receivedMeta) {
           return;

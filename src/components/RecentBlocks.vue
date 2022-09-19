@@ -46,16 +46,10 @@
 
 <script lang="ts">
 import {onBeforeUnmount, ref} from 'vue'
-import {Client} from 'koinos-rpc'
 import moment from "moment";
+import {useClient} from "../composable/useClient";
 
 export default {
-  props: {
-    client: {
-      type: Client,
-      required: true
-    }
-  },
 
   methods: {
     toRelativeTime: (timestamp: number) => {
@@ -68,14 +62,15 @@ export default {
     walletLink: (address: string) => `/address/${address}`
   },
 
-  async setup(props: any) {
+  async setup() {
 
     let blocks = ref([]);
     const loading = ref(true);
 
     const updateBlocks = async () => {
-      const {topology} = await props.client.blockStore.getHighestBlock();
-      const {block_items} = await props.client.blockStore.getBlocksByHeight(topology.id, topology.height - 20, 20);
+      const {client} = useClient();
+      const {topology} = await client.blockStore.getHighestBlock();
+      const {block_items} = await client.blockStore.getBlocksByHeight(topology.id, topology.height - 20, 20);
       console.log(block_items);
       blocks.value = block_items.reverse();
       loading.value = false;

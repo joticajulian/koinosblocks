@@ -5,15 +5,9 @@
 </template>
 
 <script>
-import {Client} from "koinos-rpc";
-import Navbar from "./components/Navbar.vue";
+import Navbar from "./components/header/Navbar.vue";
 export default {
   components: {Navbar},
-  data() {
-    return {
-      client: new Client(["https://api.koinosblocks.com"])
-    }
-  }
 }
 
 </script>

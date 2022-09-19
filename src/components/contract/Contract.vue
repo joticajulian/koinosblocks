@@ -4,7 +4,7 @@
       <va-card-title>Contract {{ address }} details</va-card-title>
       <va-card-content>
         <SingleMethod v-for="method in methods" :key="method.name" :name="method.name" :details="method.details"
-                      :protos="protos" :client="client" :address="address"/>
+                      :protos="protos" :address="address"/>
         <Proto v-for="proto in protos" :key="proto.name" :proto="proto"/>
       </va-card-content>
     </va-card>
@@ -12,7 +12,6 @@
 </template>
 
 <script lang="ts">
-import {Client} from "koinos-rpc";
 import MethodsList from "./MethodsList.vue";
 import {computed} from "vue";
 import * as koinosPbToProto from "@roamin/koinos-pb-to-proto";
@@ -43,10 +42,6 @@ interface Method {
 export default {
   components: {Proto, SingleMethod, MethodsList},
   props: {
-    client: {
-      type: Client,
-      required: true
-    },
     address: {
       type: String,
       required: true
@@ -58,6 +53,7 @@ export default {
   },
 
   setup(props: any) {
+
     const extractMethods = (abi: Abi | null): Method[] => {
       if (!abi) {
         return [];
