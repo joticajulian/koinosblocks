@@ -1,13 +1,24 @@
 <template>
   <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
-  <Navbar />
-  <router-view />
+  <div id="main">
+    <Navbar />
+    <router-view />
+    <Footer />
+  </div>
 </template>
 
 <script>
 import Navbar from "./components/header/Navbar.vue";
+import Footer from "./components/header/Footer.vue";
 export default {
-  components: {Navbar},
+  components: {Footer, Navbar},
 }
 
 </script>
+
+<style scoped>
+#main {
+  margin: 0 auto;
+  max-width: 1400px;
+}
+</style>

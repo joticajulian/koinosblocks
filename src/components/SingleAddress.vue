@@ -1,6 +1,6 @@
 <template>
   <va-inner-loading :loading="loading">
-    <va-card class="offset--sm row ma-3">
+    <va-card class="offset--sm row ma-3" stripe stripe-color="success">
       <va-card-title>Wallet {{ address }} details</va-card-title>
       <va-card-content>
         Wallet details incoming

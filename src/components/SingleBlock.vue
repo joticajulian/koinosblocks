@@ -1,6 +1,6 @@
 <template>
   <va-inner-loading :loading="loading">
-    <va-card class="offset--sm row ma-3">
+    <va-card class="offset--sm row ma-3" stripe stripe-color="success">
       <va-card-title>Block #{{ height }} details</va-card-title>
       <va-card-content>
         <pre>{{ JSON.stringify(block_topology, null, 2) }}</pre>

@@ -1,8 +1,10 @@
 <template>
-  <va-navbar color="#cccccc">
+  <va-navbar color="#ffffff">
     <template #left>
       <va-navbar-item>
-        <router-link to="/"><h1>koinosblocks</h1></router-link>
+        <router-link to="/">
+          <img src="/koinosblocks.png" id="logo" alt="koinosblocks Logo"/>
+        </router-link>
       </va-navbar-item>
     </template>
     <!--    <template #center>-->
@@ -26,11 +28,7 @@ export default {
 </script>
 
 <style scoped>
-a {
-  color: #34495e;
-}
-
-a:hover {
-  text-decoration: underline;
+#logo {
+  max-width: 150px;
 }
 </style>

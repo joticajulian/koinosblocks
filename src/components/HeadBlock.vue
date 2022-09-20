@@ -1,6 +1,6 @@
 <template>
   <va-inner-loading :loading="loading">
-    <va-card>
+    <va-card color="primary" gradient>
       <va-card-title>Head info</va-card-title>
       <va-card-content v-if="topology">
         <pre>{{ JSON.stringify(topology, null, 2) }}</pre>

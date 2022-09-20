@@ -5,12 +5,6 @@ import { NodeGlobalsPolyfillPlugin} from "@esbuild-plugins/node-globals-polyfill
 
 export default defineConfig({
     plugins: [vue()],
-    // ssr: {
-    //     noExternal: true
-    // },
-    // define: {
-    //     'process.env': process.env
-    // },
     optimizeDeps: {
         esbuildOptions: {
             define: {

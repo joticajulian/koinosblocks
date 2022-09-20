@@ -1,6 +1,6 @@
 <template>
   <va-inner-loading :loading="loading">
-    <va-card class="offset--sm row ma-3">
+    <va-card class="offset--sm row ma-3" stripe stripe-color="info">
       <va-card-title>Contract {{ address }} details</va-card-title>
       <va-card-content>
         <SingleMethod v-for="method in methods" :key="method.name" :name="method.name" :details="method.details"

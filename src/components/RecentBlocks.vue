@@ -1,6 +1,6 @@
 <template>
   <va-inner-loading :loading="loading">
-    <va-card class="offset--sm">
+    <va-card class="offset--sm" stripe stripe-color="success">
       <va-card-title>Recent blocks</va-card-title>
       <va-card-content>
         <table class="va-table va-table--hoverable  va-table--striped" style="width: 100%;">
@@ -10,7 +10,7 @@
             <th>Date</th>
             <th>ID</th>
             <th>Producer</th>
-            <th>Transactions</th>
+            <th>TXs</th>
             <th>Events</th>
           </tr>
           </thead>
