@@ -1,26 +1,24 @@
 <template>
-  <va-inner-loading :loading="loading">
-    <va-card class="offset--sm row ma-3" stripe stripe-color="success">
-      <va-card-title>Block #{{ height }} details</va-card-title>
-      <va-card-content>
-        <pre>{{ JSON.stringify(block_topology, null, 2) }}</pre>
-      </va-card-content>
-    </va-card>
-    <TransactionsTable v-if="transactions" :loading="loading" :transactions="transactions"/>
-    <EventsTable v-if="events" :loading="loading" :events="events"/>
-    <va-card v-if="transactions" class="offset--sm row ma-3">
-      <va-card-title>Transactions raw</va-card-title>
-      <va-card-content>
-        <pre>{{ JSON.stringify(transactions, null, 2) }}</pre>
-      </va-card-content>
-    </va-card>
-    <va-card v-if="events" class="offset--sm row ma-3">
-      <va-card-title>Events raw</va-card-title>
-      <va-card-content>
-        <pre>{{ JSON.stringify(events, null, 2) }}</pre>
-      </va-card-content>
-    </va-card>
-  </va-inner-loading>
+  <va-card class="offset--sm row ma-3" stripe stripe-color="success">
+    <va-card-title>Block #{{ height }} details</va-card-title>
+    <va-card-content>
+      <pre>{{ JSON.stringify(block_topology, null, 2) }}</pre>
+    </va-card-content>
+  </va-card>
+  <TransactionsTable v-if="transactions" :loading="loading" :transactions="transactions"/>
+  <EventsTable v-if="events" :loading="loading" :events="events"/>
+  <va-card v-if="transactions && transactions.length" class="offset--sm row ma-3">
+    <va-card-title>Transactions raw</va-card-title>
+    <va-card-content>
+      <pre>{{ JSON.stringify(transactions, null, 2) }}</pre>
+    </va-card-content>
+  </va-card>
+  <va-card v-if="events && events.length" class="offset--sm row ma-3">
+    <va-card-title>Events raw</va-card-title>
+    <va-card-content>
+      <pre>{{ JSON.stringify(events, null, 2) }}</pre>
+    </va-card-content>
+  </va-card>
 </template>
 
 <script lang="ts">
