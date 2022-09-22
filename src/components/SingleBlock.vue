@@ -1,4 +1,5 @@
 <template>
+  <va-inner-loading :loading="loading">
   <va-card class="offset--sm row ma-3" stripe stripe-color="success">
     <va-card-title>Block details</va-card-title>
     <va-card-content>
@@ -17,13 +18,15 @@
         <ElementWithDescription element="Producer" :description="block_topology.header.signer"
                                 :link="toAddressLink(block_topology.header.signer)"/>
         <ElementWithDescription element="Signature" :description="block_topology.signature"/>
-        <ElementWithDescription v-if="block_topology.header.approved_proposals" element="Approved proposals" :description="block_topology.header.approved_proposals.join(', ')"/>
+        <ElementWithDescription v-if="block_topology.header.approved_proposals" element="Approved proposals" :description="block_topology.header.approved_proposals.join(', ')" :link="toProposalLink(block_topology.header.approved_proposals[0])"/>
       </div>
       <RawData :data="block_topology"/>
     </va-card-content>
   </va-card>
+  </va-inner-loading>
   <TransactionsTable v-if="transactions" :loading="loading" :transactions="transactions"/>
   <EventsTable v-if="events" :loading="loading" :events="events"/>
+
 </template>
 
 <script lang="ts">
@@ -96,6 +99,7 @@ export default {
       loading,
       toBlockLink: (blockId: string) => `/block/${blockId}`,
       toAddressLink: (address: string) => `/address/${address}`,
+      toProposalLink: (proposalId: string) => `/proposal/${proposalId}`,
       toRelativeTime: (timestamp: number) => {
         return moment.unix(timestamp / 1000).fromNow()
       },

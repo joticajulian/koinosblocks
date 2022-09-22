@@ -22,7 +22,6 @@
             </td>
             <td>{{ operation[Object.keys(operation)[0]].entry_point }}</td>
             <td>{{ operation[Object.keys(operation)[0]].args }}</td>
-
           </tr>
           </tbody>
         </table>

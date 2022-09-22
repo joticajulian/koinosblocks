@@ -24,7 +24,6 @@
             color="primary"
             @click="readContract(details.argument, details.return)">Read
         </va-button>
-
       </div>
     </va-collapse>
   </div>
@@ -65,15 +64,15 @@ export default {
     const error = ref(null);
 
     const getType = (type_description: string) => {
+      const root = new protobuf.Root();
       for (const proto of props.protos) {
         try {
-          const parse = protobuf.parse(proto.definition);
-          const type = parse.root.lookupType(type_description)
-          return type;
+          protobuf.parse(proto.definition, root); // TODO set keepCase true and fix all methods
         } catch (e) {
+          console.log('error', e)
         }
       }
-      return null;
+      return root.lookup(type_description)
     }
 
     const prepareContractArguments = (type: string, input: any) => {
@@ -86,10 +85,13 @@ export default {
     }
 
     const fields = computed<Argument[]>((): Argument[] => {
+
+      // TODO use single root for all types
+
       for (const proto of props.protos) {
         try {
           const parse = protobuf.parse(proto.definition);
-          const type = parse.root.lookupType(props.details.argument)
+          const type = parse.root.lookup(props.details.argument)
           return Object.keys(type.fields).map((name) => {
             return {
               name: name,
@@ -114,6 +116,8 @@ export default {
             entry_point: parseInt(props.details['entry-point'], 16)
           });
 
+          console.log(result);
+
           if (!result) {
             return;
           }
@@ -123,7 +127,7 @@ export default {
           const message = type?.decode(buf)
           if (message) {
             const mes = message.toJSON();
-            console.log(mes);
+            console.log('mes', mes);
             res.value = mes
           }
         } catch (e: any) {

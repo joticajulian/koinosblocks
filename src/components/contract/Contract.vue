@@ -3,8 +3,12 @@
     <va-card class="offset--sm row ma-3" stripe stripe-color="info">
       <va-card-title>Contract {{ address }} details</va-card-title>
       <va-card-content>
+        <h1>Conctract methods</h1>
         <SingleMethod v-for="method in methods" :key="method.name" :name="method.name" :details="method.details"
                       :protos="protos" :address="address"/>
+
+        <br />
+        <h1>Proto files</h1>
         <Proto v-for="proto in protos" :key="proto.name" :proto="proto"/>
       </va-card-content>
     </va-card>
@@ -67,6 +71,7 @@ export default {
     }
 
     const decodeProtos = (abi: Abi | null): ProtoDescriptor[] => {
+      console.log('abi', abi);
       if (!abi) {
         return [];
       }
