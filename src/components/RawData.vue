@@ -43,6 +43,9 @@ pre {
   border-radius: 4px;
   padding: 10px;
   overflow: scroll;
+  max-width: 100%;
+  max-height: 500px;
+  white-space: pre-wrap;
 }
 .data {
   margin: 1em 0
