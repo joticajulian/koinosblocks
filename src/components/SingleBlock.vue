@@ -2,7 +2,19 @@
   <va-card class="offset--sm row ma-3" stripe stripe-color="success">
     <va-card-title>Block #{{ height }} details</va-card-title>
     <va-card-content>
-      <pre>{{ JSON.stringify(block_topology, null, 2) }}</pre>
+      <div v-if="block_topology">
+        <ElementWithDescription element="Block ID" :description="block_topology.id"
+                                :link="toBlockLink(block_topology.id)"/>
+        <ElementWithDescription element="Block height" :description="block_topology.block_height"
+                                :link="toBlockLink(block_topology.block_height)"/>
+        <ElementWithDescription element="Previous block" :description="block_topology.header.previous"
+                                :link="toBlockLink(block_topology.header.previous)"/>
+        <ElementWithDescription element="Timestamp" :description="block_topology.header.timestamp"/>
+        <ElementWithDescription element="Signer" :description="block_topology.header.signer"
+                                :link="toAddressLink(block_topology.header.signer)"/>
+        <ElementWithDescription element="Signature" :description="block_topology.signature"/>
+      </div>
+      <RawData :data="block_topology"/>
     </va-card-content>
   </va-card>
   <TransactionsTable v-if="transactions" :loading="loading" :transactions="transactions"/>
@@ -26,9 +38,11 @@ import {ref} from 'vue'
 import TransactionsTable from "./TransactionsTable.vue";
 import EventsTable from "./EventsTable.vue";
 import {useClient} from "../composable/useClient";
+import ElementWithDescription from "./ElementWithDescription.vue";
+import RawData from "./RawData.vue";
 
 export default {
-  components: {EventsTable, TransactionsTable},
+  components: {RawData, ElementWithDescription, EventsTable, TransactionsTable},
   props: {
     height: {
       type: Number,
@@ -53,6 +67,8 @@ export default {
         block_height: block_items[0].block_height,
         block_id: block_items[0].block_id,
         header: block_items[0].block.header,
+        id: block_items[0].block.id,
+        signature: block_items[0].block.signature, // TODO fix type in koinos-rpc
       }
       transactions.value = block_items[0].block.transactions;
       events.value = block_items[0].receipt.events;
@@ -70,6 +86,8 @@ export default {
       transactions,
       events,
       loading,
+      toBlockLink: (blockId: string) => `/block/${blockId}`,
+      toAddressLink: (address: string) => `/address/${address}`,
     }
   }
 }
@@ -84,4 +102,5 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
 </style>

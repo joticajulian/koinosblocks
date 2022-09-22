@@ -32,7 +32,6 @@
 </template>
 
 <script lang="ts">
-import moment from "moment";
 
 export default {
   props: {
