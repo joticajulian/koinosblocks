@@ -76,13 +76,8 @@ export default {
       return null;
     }
 
-    const prepareInputArg = (type: string, input: any) => {
-
-      console.log("type", type);
-      console.log("input", input);
-
+    const prepareContractArguments = (type: string, input: any) => {
       const inputType = getType(type);
-
       if (!inputType) {
         return null;
       }
@@ -108,22 +103,16 @@ export default {
     })
 
     return {
-      readContract: async (argType: string, responseType: string) => {
+      readContract: async (argumentType: string, responseType: string) => {
         try {
           const {client} = useClient();
-
           res.value = null;
           error.value = null;
-
-          console.log("submit", argType, responseType);
-
           const {result} = await client.call('chain', 'read_contract', {
-            args: prepareInputArg(argType, {...arg}),
+            args: prepareContractArguments(argumentType, {...arg}),
             contract_id: props.address,
             entry_point: parseInt(props.details['entry-point'], 16)
           });
-
-          console.log('result', result);
 
           if (!result) {
             return;

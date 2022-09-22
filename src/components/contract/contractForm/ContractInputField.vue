@@ -31,14 +31,12 @@ export default {
     const userInput = ref("");
     const encodedInput = ref<Uint8Array | string | null>(null);
 
-    console.log(props.argument);
-
     const encodeValue = (value: any) => {
       if (props.argument.details.type !== "bytes") return value;
 
-      // if (!typeField.btype) {
-      //   return decodeBase64url(value);
-      // }
+      if (!props.argument.details?.options['(koinos.btype)']) {
+        return utils.decodeBase64url(value);
+      }
 
       switch (props.argument.details?.options['(koinos.btype)']) {
         case "BASE58":

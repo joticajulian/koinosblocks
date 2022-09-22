@@ -1,17 +1,13 @@
 <template>
   <va-inner-loading :loading="loading">
     <va-card color="primary" gradient>
-      <va-card-title>Head info</va-card-title>
+      <va-card-title>Head block info</va-card-title>
       <va-card-content v-if="topology">
-        <pre>{{ JSON.stringify(topology, null, 2) }}</pre>
-        <!--        <dl class="row">-->
-        <!--          <dt class="flex md6">Id</dt>-->
-        <!--          <dd class="flex md6">{{topology?.id}}</dd>-->
-        <!--          <dt class="flex md6">Height</dt>-->
-        <!--          <dd class="flex md6">{{topology?.height}}</dd>-->
-        <!--          <dt class="flex md6">Previous</dt>-->
-        <!--          <dd class="flex md6">{{topology?.previous}}</dd>-->
-        <!--        </dl>-->
+        <div v-if="topology">
+          <ElementWithDescription element="Block height" :description="topology.height.toString()"/>
+          <ElementWithDescription element="Block ID" :description="topology.id"/>
+          <ElementWithDescription element="Previous block" :description="topology.previous"/>
+        </div>
       </va-card-content>
     </va-card>
   </va-inner-loading>
@@ -21,8 +17,10 @@
 import {onBeforeUnmount, Ref, ref} from 'vue'
 import {BlockTopology} from "koinos-rpc/dist/service/Chain";
 import {useClient} from "../composable/useClient";
+import ElementWithDescription from "./ElementWithDescription.vue";
 
 export default {
+  components: {ElementWithDescription},
   async setup() {
 
     let topology: Ref<BlockTopology | null> = ref(null);
@@ -44,7 +42,7 @@ export default {
 
     return {
       topology,
-      loading,
+      loading
     }
   }
 }

@@ -1,25 +1,27 @@
 <template>
   <Suspense>
-    <SingleBlock :height="block" />
+    <SingleBlock :id="id" />
   </Suspense>
 </template>
 
 <script>
 import {useRoute} from 'vue-router'
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import SingleBlock from "../components/SingleBlock.vue";
-import {Client} from "koinos-rpc";
 
 export default {
   name: 'Block',
   components: {SingleBlock},
   setup() {
     const route = useRoute();
+    const id = ref(route.params.id);
 
-    const block = ref(Number(route.params.height));
+    watch(route, (route) => {
+      id.value = route.params.id;
+    });
 
     return {
-      block
+      id
     }
 
   }

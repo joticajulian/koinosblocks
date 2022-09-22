@@ -25,7 +25,7 @@
               {{ toDateTime(block.block.header.timestamp) }}
             </td>
             <td>
-              <router-link :to="blockLink(block.block_height)">
+              <router-link :to="blockLink(block.block_id)">
                 {{ block.block_id }}
               </router-link>
             </td>
@@ -70,7 +70,7 @@ export default {
     const updateBlocks = async () => {
       const {client} = useClient();
       const {topology} = await client.blockStore.getHighestBlock();
-      const {block_items} = await client.blockStore.getBlocksByHeight(topology.id, topology.height - 20, 20);
+      const {block_items} = await client.blockStore.getBlocksByHeight(topology.id, topology.height - 19, 20);
       console.log(block_items);
       blocks.value = block_items.reverse();
       loading.value = false;

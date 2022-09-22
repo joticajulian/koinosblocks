@@ -23,6 +23,7 @@
           </tr>
           </tbody>
         </table>
+        <RawData :data="events"/>
       </va-card-content>
     </va-card>
   </va-inner-loading>
@@ -30,7 +31,9 @@
 
 <script lang="ts">
 
+import RawData from "./RawData.vue";
 export default {
+  components: {RawData},
   props: {
     events: {
       type: Array,

@@ -29,6 +29,7 @@
           </tr>
           </tbody>
         </table>
+        <RawData :data="transactions"/>
       </va-card-content>
     </va-card>
   </va-inner-loading>
@@ -36,8 +37,10 @@
 
 <script lang="ts">
 import moment from "moment";
+import RawData from "./RawData.vue";
 
 export default {
+  components: {RawData},
   props: {
     transactions: {
       type: Array,

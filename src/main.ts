@@ -11,7 +11,7 @@ import hljsVuePlugin from "@highlightjs/vue-plugin";
 
 const routes = [
     {path: '/', component: Overview},
-    {path: '/block/:height', component: Block, meta: {title: 'Koinosblocks.com - block details'}},
+    {path: '/block/:id', component: Block, meta: {title: 'Koinosblocks.com - block details'}},
     {path: '/tx/:id', component: Transaction, meta: {title: 'Koinosblocks.com - transaction details'}},
     {path: '/address/:address', component: Address, meta: {title: 'Koinosblocks.com - address details'}},
 ]
