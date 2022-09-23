@@ -9,6 +9,7 @@ import Address from './pages/Address.vue';
 import Proposal from './pages/Proposal.vue';
 import {createRouter, createWebHistory} from "vue-router";
 import hljsVuePlugin from "@highlightjs/vue-plugin";
+import VueGtag from "vue-gtag";
 
 const routes = [
     {path: '/', component: Overview},
@@ -27,6 +28,7 @@ router.beforeEach((to, from, next) => {
 });
 
 const app = createApp(App)
+app.use(VueGtag, {config: {id: "G-4T8BF134X6"}})
 app.use(router)
 app.use(createVuestic())
 app.use(hljsVuePlugin)
