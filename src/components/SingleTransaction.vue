@@ -20,12 +20,12 @@
 
 <script lang="ts">
 import {ref} from 'vue'
-import TransactionsTable from "./TransactionsTable.vue";
-import EventsTable from "./EventsTable.vue";
-import OperationsTable from "./OperationsTable.vue";
+import TransactionsTable from "./transaction/TransactionsTable.vue";
+import EventsTable from "./transaction/EventsTable.vue";
+import OperationsTable from "./transaction/OperationsTable.vue";
 import {useClient} from "../composable/useClient";
-import DescriptionRow from "./DescriptionRow.vue";
-import RawData from "./RawData.vue";
+import DescriptionRow from "./common/DescriptionRow.vue";
+import RawData from "./common/RawData.vue";
 
 export default {
   components: {RawData, DescriptionRow, OperationsTable, EventsTable, TransactionsTable},

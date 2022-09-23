@@ -47,7 +47,7 @@
 <script lang="ts">
 import {onBeforeUnmount, ref} from 'vue'
 import moment from "moment";
-import {useClient} from "../composable/useClient";
+import {useClient} from "../../composable/useClient";
 
 export default {
 

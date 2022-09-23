@@ -12,8 +12,8 @@
 
 <script lang="ts">
 import {computed, Ref, ref} from 'vue'
-import TransactionsTable from "./TransactionsTable.vue";
-import EventsTable from "./EventsTable.vue";
+import TransactionsTable from "./transaction/TransactionsTable.vue";
+import EventsTable from "./transaction/EventsTable.vue";
 import {Methods} from "../types/Method";
 import MethodsList from "./contract/MethodsList.vue";
 import * as koinosPbToProto from "@roamin/koinos-pb-to-proto";

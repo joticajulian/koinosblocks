@@ -33,7 +33,7 @@
 
 <script lang="ts">
 
-import RawData from "./RawData.vue";
+import RawData from "../common/RawData.vue";
 export default {
   components: {RawData},
   props: {

@@ -30,11 +30,11 @@
 
 <script lang="ts">
 import {ref, watch} from 'vue'
-import TransactionsTable from "./TransactionsTable.vue";
-import EventsTable from "./EventsTable.vue";
+import TransactionsTable from "./transaction/TransactionsTable.vue";
+import EventsTable from "./transaction/EventsTable.vue";
 import {useClient} from "../composable/useClient";
-import DescriptionRow from "./DescriptionRow.vue";
-import RawData from "./RawData.vue";
+import DescriptionRow from "./common/DescriptionRow.vue";
+import RawData from "./common/RawData.vue";
 import {Transaction} from "koinos-rpc/dist/service/TransactionStore";
 import moment from "moment/moment";
 

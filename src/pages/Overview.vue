@@ -16,9 +16,9 @@
 </template>
 
 <script>
-import RecentBlocks from "../components/RecentBlocks.vue";
+import RecentBlocks from "../components/block/RecentBlocks.vue";
 import Navbar from "../components/layout/Navbar.vue";
-import HeadBlock from "../components/HeadBlock.vue";
+import HeadBlock from "../components/block/HeadBlock.vue";
 export default {
   components: {HeadBlock, Navbar, RecentBlocks},
 }

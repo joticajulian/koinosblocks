@@ -7,20 +7,22 @@
 <script>
 import {ref} from 'vue';
 import {useClient} from "../../composable/useClient.ts";
-import { useToast } from 'vuestic-ui'
+import {useToast} from 'vuestic-ui'
 
 export default {
   name: 'ApiInput',
   setup() {
-    const { init } = useToast()
-
-    const api = ref('https://api.koinosblocks.com');
+    const {init} = useToast()
     const {updateApiAddress} = useClient();
+
+    const api = ref(localStorage.getItem('api') || 'https://api.koinosblocks.com');
+
     return {
       api,
       updateClientApi: () => {
+        localStorage.setItem('api', api.value);
         updateApiAddress(api.value)
-        init({message: 'API node updated', position: 'bottom-right', color: 'success' })
+        init({message: 'API node updated', position: 'bottom-right', color: 'success'})
       }
     }
   }

@@ -27,8 +27,8 @@ import * as protobuf from "protobufjs";
 import {Message, Root} from "protobufjs";
 import {utils} from "koilib";
 import base64url from "base64url";
-import RawData from "./RawData.vue";
-import DescriptionRow from "./DescriptionRow.vue";
+import RawData from "./common/RawData.vue";
+import DescriptionRow from "./common/DescriptionRow.vue";
 import ProposalOperationsTable from "./proposal/ProposalOperationsTable.vue";
 
 export default {
