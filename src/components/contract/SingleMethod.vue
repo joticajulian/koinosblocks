@@ -1,7 +1,6 @@
 <template>
   <div class="row">
-    <va-collapse class="mb-2 mt-2"
-                 :color="color"
+    <va-collapse class="mb-2 mt-2" :color="color"
                  style="width: 100%;"
                  :header="header"
                  solid
@@ -151,6 +150,7 @@ export default {
 pre {
   margin: 10px;
 }
+
 va-input {
   margin: 10px;
 }

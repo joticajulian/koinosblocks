@@ -17,8 +17,7 @@
 
 <script>
 import RecentBlocks from "../components/RecentBlocks.vue";
-import {Client} from "koinos-rpc";
-import Navbar from "../components/header/Navbar.vue";
+import Navbar from "../components/layout/Navbar.vue";
 import HeadBlock from "../components/HeadBlock.vue";
 export default {
   components: {HeadBlock, Navbar, RecentBlocks},

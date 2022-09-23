@@ -3,15 +3,14 @@
     <va-card class="offset--sm row ma-3" stripe stripe-color="success">
       <va-card-title>Proposal details</va-card-title>
       <va-card-content v-if="details">
-        <ElementWithDescription element="Vote start height" :description="details.vote_start_height ?? '0'" />
-        <ElementWithDescription element="Vote threshold" :description="details.vote_threshold ?? '0'" />
-        <ElementWithDescription element="Vote tally" :description="details.vote_tally ?? '0'" />
-        <ElementWithDescription element="Shall authorize" :description="details.shall_authorize ?? 'false'" />
-        <ElementWithDescription element="Updates governance" :description="details.updates_governance ?? 'false'" />
-        <ElementWithDescription element="Status" :description="getStatus(details.status ?? 0)" />
-        <ElementWithDescription element="Operation merkle root" :description="details.operation_merkle_root"
-                                :value="details.fee"/>
-        <ElementWithDescription element="Fee" :description="details.fee" :value="details.fee"/>
+        <DescriptionRow description="Vote start height" :data="details.vote_start_height ?? '0'"/>
+        <DescriptionRow description="Vote threshold" :data="details.vote_threshold ?? '0'"/>
+        <DescriptionRow description="Vote tally" :data="details.vote_tally ?? '0'"/>
+        <DescriptionRow description="Shall authorize" :data="details.shall_authorize ?? 'false'"/>
+        <DescriptionRow description="Updates governance" :data="details.updates_governance ?? 'false'"/>
+        <DescriptionRow description="Status" :data="getStatus(details.status ?? 0)"/>
+        <DescriptionRow description="Operation merkle root" :data="details.operation_merkle_root"/>
+        <DescriptionRow description="Fee" :data="details.fee"/>
         <RawData v-if="details" :data="details"/>
       </va-card-content>
     </va-card>
@@ -25,16 +24,16 @@ import {ref, watch} from "vue";
 import {useClient} from "../composable/useClient";
 import * as koinosPbToProto from "@roamin/koinos-pb-to-proto";
 import * as protobuf from "protobufjs";
-import {Root} from "protobufjs";
+import {Message, Root} from "protobufjs";
 import {utils} from "koilib";
 import base64url from "base64url";
 import RawData from "./RawData.vue";
-import ElementWithDescription from "./ElementWithDescription.vue";
+import DescriptionRow from "./DescriptionRow.vue";
 import ProposalOperationsTable from "./proposal/ProposalOperationsTable.vue";
 
 export default {
   name: 'SingleProposal',
-  components: {ProposalOperationsTable, ElementWithDescription, RawData, SingleBlock},
+  components: {ProposalOperationsTable, DescriptionRow, RawData, SingleBlock},
   props: {
     id: {
       type: String,
@@ -67,7 +66,6 @@ export default {
         } catch (e) {
         }
       }
-      console.log(root);
       return root;
     }
 
@@ -80,7 +78,11 @@ export default {
 
       const {result} = await client.chain.readContract('1NsnpSsXJDgPTFgFXRiP8F3Acg9gj6VjUi', 0xc66013ad, args);
       const buf = base64url.toBuffer(result);
-      const {value} = returnType?.decode(buf).toJSON()
+      // const test = returnType?.decode(buf);
+      // console.log(test);
+      // const {value} = returnType.toObject(test, {defaults: true, arrays: true, longs: String, enums: String, bytes: String});
+      // console.log(value);
+      const {value} = returnType?.decode(buf).toJSON();
       details.value = value;
     }
 
@@ -88,7 +90,6 @@ export default {
       loading.value = true;
       const protos = await getGovernanceProto();
       root.value = parseProtos(protos!);
-      console.log(root.value)
       await getProposal();
       loading.value = false;
     }
@@ -124,7 +125,8 @@ export default {
       id,
       loading,
       details,
-      getStatus
+      getStatus,
+      toProposalId: (root: string) => `0x${utils.toHexString(utils.decodeBase64(root))}`
     }
   }
 }

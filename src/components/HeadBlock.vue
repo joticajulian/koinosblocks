@@ -1,12 +1,15 @@
 <template>
   <va-inner-loading :loading="loading">
     <va-card color="primary" gradient>
-      <va-card-title>Head block info</va-card-title>
-      <va-card-content v-if="topology">
-        <div v-if="topology">
-          <ElementWithDescription element="Block height" :description="topology.height.toString()"/>
-          <ElementWithDescription element="Block ID" :description="topology.id"/>
-          <ElementWithDescription element="Previous block" :description="topology.previous"/>
+      <va-card-title>Chain info</va-card-title>
+      <va-card-content v-if="headInfo">
+        <div v-if="headInfo.head_topology">
+          <DescriptionRow description="Head block time"  :data="toDateTime(headInfo.head_block_time)"/>
+          <DescriptionRow description="Head block height" :data="headInfo.head_topology.height.toString()"/>
+          <DescriptionRow description="Last irreversible block" :data="headInfo.last_irreversible_block"/>
+          <DescriptionRow description="Head state merkle root"  :data="headInfo.head_state_merkle_root"/>
+          <DescriptionRow description="Head block ID" :data="headInfo.head_topology.id"/>
+          <DescriptionRow description="Previous block" :data="headInfo.head_topology.previous"/>
         </div>
       </va-card-content>
     </va-card>
@@ -15,22 +18,22 @@
 
 <script lang="ts">
 import {onBeforeUnmount, Ref, ref} from 'vue'
-import {BlockTopology} from "koinos-rpc/dist/service/Chain";
 import {useClient} from "../composable/useClient";
-import ElementWithDescription from "./ElementWithDescription.vue";
+import DescriptionRow from "./DescriptionRow.vue";
+import moment from "moment";
 
 export default {
-  components: {ElementWithDescription},
+  components: {DescriptionRow},
   async setup() {
 
-    let topology: Ref<BlockTopology | null> = ref(null);
+    let headInfo = ref<any>(null);
     const loading = ref(true);
 
     const updateBlocks = async () => {
       const {client} = useClient();
-      const res = await client.blockStore.getHighestBlock();
-      console.log(res.topology);
-      topology.value = res.topology;
+      const res = await client.chain.getHeadInfo();
+      console.log(res);
+      headInfo.value = res;
       loading.value = false;
     }
 
@@ -41,8 +44,10 @@ export default {
     });
 
     return {
-      topology,
-      loading
+      headInfo,
+      loading,
+      toBlockLink: (id: string) => `/block/${id}`,
+      toDateTime: (timestamp: number) => moment.unix(timestamp / 1000).format("YYYY-MM-DD HH:mm:ss"),
     }
   }
 }

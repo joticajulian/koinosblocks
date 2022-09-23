@@ -1,28 +1,27 @@
 <template>
   <va-inner-loading :loading="loading">
-  <va-card class="offset--sm row ma-3" stripe stripe-color="success">
-    <va-card-title>Block details</va-card-title>
-    <va-card-content>
-      <div v-if="block_topology">
-        <ElementWithDescription element="Block ID" :description="block_topology.id"
-                                :link="toBlockLink(block_topology.id)"/>
-        <ElementWithDescription element="Block height" :description="block_topology.block_height"
-                                :link="toBlockLink(block_topology.block_height)"/>
-        <ElementWithDescription element="Created at" :description="toDateTime(block_topology.header.timestamp)"/>
-        <ElementWithDescription element="Previous block" :description="block_topology.header.previous"
-                                :link="toBlockLink(block_topology.header.previous)"/>
-        <ElementWithDescription element="Compute bandwidth used" :description="block_topology.receipt.compute_bandwidth_used ?? '0'" />
-        <ElementWithDescription element="Disk storage used" :description="block_topology.receipt.disk_storage_used ?? '0'" />
-        <ElementWithDescription element="Network bandwidth used" :description="block_topology.receipt.network_bandwidth_used ?? '0' "/>
-        <ElementWithDescription element="Transaction merkle root" :description="block_topology.header.transaction_merkle_root"/>
-        <ElementWithDescription element="Producer" :description="block_topology.header.signer"
-                                :link="toAddressLink(block_topology.header.signer)"/>
-        <ElementWithDescription element="Signature" :description="block_topology.signature"/>
-        <ElementWithDescription v-if="block_topology.header.approved_proposals" element="Approved proposals" :description="block_topology.header.approved_proposals.join(', ')" :link="toProposalLink(block_topology.header.approved_proposals[0])"/>
-      </div>
-      <RawData :data="block_topology"/>
-    </va-card-content>
-  </va-card>
+    <va-card class="offset--sm row ma-3" stripe stripe-color="success">
+      <va-card-title>Block details</va-card-title>
+      <va-card-content>
+        <div v-if="block_topology">
+          <DescriptionRow description="Block ID" :data="prepareBlocks([block_topology.id])"/>
+          <DescriptionRow description="Block height" :data="prepareBlocks([block_topology.block_height])"/>
+          <DescriptionRow description="Created at" :data="toDateTime(block_topology.header.timestamp)"/>
+          <DescriptionRow description="Previous block" :data="prepareBlocks([block_topology.header.previous])"/>
+          <DescriptionRow description="Compute bandwidth used"
+                          :data="block_topology.receipt.compute_bandwidth_used ?? '0'"/>
+          <DescriptionRow description="Disk storage used" :data="block_topology.receipt.disk_storage_used ?? '0'"/>
+          <DescriptionRow description="Network bandwidth used"
+                          :data="block_topology.receipt.network_bandwidth_used ?? '0' "/>
+          <DescriptionRow description="Transaction merkle root" :data="block_topology.header.transaction_merkle_root"/>
+          <DescriptionRow description="Producer" :data="prepareProducers([block_topology.header.signer])" />
+          <DescriptionRow description="Signature" :data="block_topology.signature"/>
+          <DescriptionRow v-if="block_topology.header.approved_proposals" description="Approved proposals"
+                          :data="prepareProposals(block_topology.header.approved_proposals)"/>
+        </div>
+        <RawData :data="block_topology"/>
+      </va-card-content>
+    </va-card>
   </va-inner-loading>
   <TransactionsTable v-if="transactions" :loading="loading" :transactions="transactions"/>
   <EventsTable v-if="events" :loading="loading" :events="events"/>
@@ -34,13 +33,13 @@ import {ref, watch} from 'vue'
 import TransactionsTable from "./TransactionsTable.vue";
 import EventsTable from "./EventsTable.vue";
 import {useClient} from "../composable/useClient";
-import ElementWithDescription from "./ElementWithDescription.vue";
+import DescriptionRow from "./DescriptionRow.vue";
 import RawData from "./RawData.vue";
 import {Transaction} from "koinos-rpc/dist/service/TransactionStore";
 import moment from "moment/moment";
 
 export default {
-  components: {RawData, ElementWithDescription, EventsTable, TransactionsTable},
+  components: {RawData, DescriptionRow, EventsTable, TransactionsTable},
   props: {
     id: {
       type: Number,
@@ -71,7 +70,7 @@ export default {
         res = await client.blockStore.getBlocksByHeight(topology.id, Number(id), 1);
       }
 
-      console.log( res.block_items[0]);
+      console.log(res.block_items);
 
       block_topology.value = {
         block_height: res.block_items[0].block_height,
@@ -99,7 +98,18 @@ export default {
       loading,
       toBlockLink: (blockId: string) => `/block/${blockId}`,
       toAddressLink: (address: string) => `/address/${address}`,
-      toProposalLink: (proposalId: string) => `/proposal/${proposalId}`,
+      prepareProducers: (producers: string[]) => producers.map((p) => ({
+        line: p,
+        link: `/address/${p}`
+      })),
+      prepareBlocks: (blocks: any[]) => blocks.map((block: any) => ({
+        line: block,
+        link: `/block/${block}`
+      })),
+      prepareProposals: (proposals: string[]) => proposals.map((p) => ({
+        line: p,
+        link: `/proposal/${p}`
+      })),
       toRelativeTime: (timestamp: number) => {
         return moment.unix(timestamp / 1000).fromNow()
       },

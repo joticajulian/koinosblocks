@@ -7,9 +7,11 @@
         </router-link>
       </va-navbar-item>
     </template>
-    <!--    <template #center>-->
-    <!--      <va-navbar-item>Center</va-navbar-item>-->
-    <!--    </template>-->
+<!--    <template #center>-->
+<!--      <va-navbar-item>-->
+<!--        <router-link to="/proposals">Proposals</router-link>-->
+<!--      </va-navbar-item>-->
+<!--    </template>-->
     <template #right>
       <va-navbar-item>
         <ApiInput/>
