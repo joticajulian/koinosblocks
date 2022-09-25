@@ -1,44 +1,75 @@
 <template>
   <div class="row">
-    <va-collapse class="mb-2 mt-2" :color="color"
-                 style="width: 100%;"
+    <va-collapse class="mb-2 mt-2 xs6" :color="color"
+                 style="width: 100%"
                  :header="header"
-                 solid
-    >
-      <div>
+                 solid>
+      <div class="method-content">
         <pre>{{ source }}</pre>
-        <pre>Arguments: {{ JSON.stringify(fields, null, 2) }}</pre>
-        <va-form style="width: 400px;">
+        <RawData v-if="fields.length" :data="fields" label="arguments proto"/>
+
+        <p class="not-authorized" v-if="!isReadOnly && !isKondorConnected">You need to connect Kondor wallet in order to write to contract</p>
+
+        <va-form>
           <ContractInputField
+              v-if="isReadOnly || isKondorConnected"
               v-for="field in fields"
               v-model="arg[field.name]"
               :argument="field"
           />
+          <va-select
+              style="width: 100%"
+              v-if="!isReadOnly && isKondorConnected"
+              class="mb-4"
+              label="Sign as"
+              :options="signers"
+              v-model="selectedSigner"
+          />
+          <va-button
+              style="display: block;"
+              v-if="!isReadOnly && isKondorConnected"
+              class="mb-4"
+              color="primary"
+              @click="writeContract(details.argument, details.return)">Sign and send
+          </va-button>
+          <va-button
+              v-if="isReadOnly"
+              class="mb-4"
+              color="primary"
+              @click="readContract(details.argument, details.return)">Read
+          </va-button>
+          <pre v-if="res">Response: {{ JSON.stringify(res, null, 2) }}</pre>
+          <div v-if="txReceipt">
+            <span>
+              Transaction with ID <router-link :to="`/tx/` + txReceipt.id">{{ txReceipt.id }}</router-link> created, {{txReceipt.rc_used}} mana used.
+            </span>
+            <RawData :data="txReceipt" label="transaction receipt"/>
+          </div>
+          <pre v-if="error">Error: {{ JSON.stringify(error, null, 2) }}</pre>
         </va-form>
-        <pre v-if="res">Response: {{ JSON.stringify(res, null, 2) }}</pre>
-        <pre v-if="error">Error: {{ JSON.stringify(error, null, 2) }}</pre>
-        <va-button
-            v-if="details['read-only']"
-            class="mb-4"
-            color="primary"
-            @click="readContract(details.argument, details.return)">Read
-        </va-button>
       </div>
     </va-collapse>
   </div>
 </template>
 
 <script lang="ts">
-import {computed, reactive, Ref, ref} from "vue";
+import {computed, reactive, Ref, ref, unref} from "vue";
 import * as protobuf from "protobufjs";
-import {VaButton, VaInput} from "vuestic-ui";
-import base64url from "base64url";
+import {VaButton, VaCollapse, VaInput} from "vuestic-ui";
 import {Argument, useClient} from "../../composable/useClient";
 import ContractInputField from "./contractForm/ContractInputField.vue";
+import {useKondor} from "../../composable/useKondor";
+import {utils} from "koilib";
+import {INamespace, Type} from "protobufjs";
+import RawData from "../common/RawData.vue";
 
 export default {
-  components: {ContractInputField, VaInput, VaButton},
+  components: {RawData, VaCollapse, ContractInputField, VaInput, VaButton},
   props: {
+    abi: {
+      type: Object,
+      required: false
+    },
     address: {
       type: String,
       required: true
@@ -54,33 +85,48 @@ export default {
     protos: {
       type: Array,
       required: true
+    },
+    signers: {
+      type: Array,
+      required: true
     }
   },
+
   setup(props: any) {
 
     let res: Ref<any | null> = ref(null)
     let arg = reactive({});
-    const error = ref(null);
 
-    const getType = (type_description: string) => {
+    const txReceipt = ref(null);
+
+    const error = ref(null);
+    const abis = ref<INamespace | null>(null);
+    const selectedSigner = ref<string>(null);
+
+    const {client} = useClient();
+    const {getSigner} = useKondor();
+
+    const getType = (type_description: string): Type => {
       const root = new protobuf.Root();
       for (const proto of props.protos) {
         try {
-          protobuf.parse(proto.definition, root); // TODO set keepCase true and fix all methods
+          protobuf.parse(proto.definition, root, {keepCase: true}); // TODO set keepCase true and fix all methods
         } catch (e) {
           console.log('error', e)
         }
       }
-      return root.lookup(type_description)
+
+      abis.value = root.toJSON();
+
+      console.log(abis.value);
+
+      return root.lookupType(type_description)
     }
 
-    const prepareContractArguments = (type: string, input: any) => {
+    const prepareContractArguments = (type: string, input: any): string => {
       const inputType = getType(type);
-      if (!inputType) {
-        return null;
-      }
       const message = inputType.create(input)
-      return base64url.encode(Buffer.from(inputType!.encode(message!).finish()))
+      return utils.encodeBase64url(Buffer.from(inputType.encode(message!).finish()))
     }
 
     const fields = computed<Argument[]>((): Argument[] => {
@@ -103,55 +149,103 @@ export default {
       return [];
     })
 
-    return {
-      readContract: async (argumentType: string, responseType: string) => {
-        try {
-          const {client} = useClient();
-          res.value = null;
-          error.value = null;
-          const {result} = await client.call('chain', 'read_contract', {
-            args: prepareContractArguments(argumentType, {...arg}),
-            contract_id: props.address,
-            entry_point: parseInt(props.details['entry-point'], 16)
-          });
+    const readContract = async (argumentType: string, responseType: string) => {
+      try {
+        res.value = null;
+        error.value = null;
+        const {result} = await client.call('chain', 'read_contract', {
+          args: prepareContractArguments(argumentType, {...arg}),
+          contract_id: props.address,
+          entry_point: parseInt(props.details['entry-point'], 16)
+        });
 
-          console.log(result);
+        console.log(result);
 
-          if (!result) {
-            return;
-          }
-
-          const type = getType(responseType);
-          const buf = base64url.toBuffer(result);
-          const message = type?.decode(buf)
-          if (message) {
-            const mes = message.toJSON();
-            console.log('mes', mes);
-            res.value = mes
-          }
-        } catch (e: any) {
-          error.value = e.message;
+        if (!result) {
+          return;
         }
 
-      },
+        const buffer = utils.decodeBase64url(result);
+        res.value = getType(responseType).decode(buffer).toJSON();
+      } catch (e: any) {
+        error.value = e.message;
+      }
+    }
+
+    const writeContract = async (argumentType: string, responseType: string) => {
+      try {
+        res.value = null;
+        txReceipt.value = null;
+        error.value = null;
+
+        const signer = await getSigner(selectedSigner.value);
+        const tx = await signer.prepareTransaction({
+          operations: [
+            {
+              call_contract: {
+                args: prepareContractArguments(argumentType, {...arg}),
+                contract_id: props.address,
+                entry_point: parseInt(props.details['entry-point'], 16)
+              }
+            }
+          ]
+        })
+
+        console.log('pre signing abi', props.abi)
+
+        const abisToSend = {
+          main: {
+            methods: props.abi.methods,
+            koilib_types: abis.value,
+            types: abis.value
+          }
+        };
+
+        console.log('abisToSend', abisToSend)
+
+        const signedTx = await signer.signTransaction(tx, abisToSend)
+
+        const {receipt} = await client.call('chain', 'submit_transaction', {
+          transaction: signedTx,
+          broadcast: true
+        });
+
+        console.log(receipt);
+        txReceipt.value = receipt
+      } catch (e: any) {
+        console.log(e);
+        error.value = e.message;
+      }
+    }
+
+    return {
+      readContract,
+      writeContract,
       res,
       arg,
       header: computed(() => `${props.name} - ${props.details.description}`),
       source: computed(() => JSON.stringify(props.details, null, 2)),
       color: computed(() => props.details['read-only'] ? "#a8bacc" : "#cccccc"),
       fields,
-      error
+      error,
+      selectedSigner,
+      isReadOnly: computed(() => props.details['read-only']),
+      isKondorConnected: computed(() => props.signers.length > 0),
+      txReceipt
     }
   }
 }
 </script>
 
 <style scoped>
-pre {
-  margin: 10px;
+
+.not-authorized {
+  font-weight: bold;
+  margin: 10px 0;
 }
 
-va-input {
-  margin: 10px;
+.method-content {
+  padding: 10px;
 }
+
 </style>

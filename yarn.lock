@@ -306,6 +306,16 @@ assert-plus@^1.0.0:
   resolved "https://registry.yarnpkg.com/assert-plus/-/assert-plus-1.0.0.tgz#f12e0f3c5d77b0b1cdd9146942e4e96c1e4dd525"
   integrity sha512-NfJ4UzBCcQGLDlQq7nHxH+tv3kyZ0hHQqF5BO6J7tNJeP5do1llPr8dZ8zHonfhAu0PHAdMkSo+8o0wxg9lZWw==
 
+assert@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/assert/-/assert-2.0.0.tgz#95fc1c616d48713510680f2eaf2d10dd22e02d32"
+  integrity sha512-se5Cd+js9dXJnu6Ag2JFc00t+HmHOen+8Q+L7O9zI0PqQXr20uk2J0XQqMxZEeo5U50o8Nvmmx7dZrl+Ufr35A==
+  dependencies:
+    es6-object-assign "^1.1.0"
+    is-nan "^1.2.1"
+    object-is "^1.0.1"
+    util "^0.12.0"
+
 asynckit@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
@@ -483,6 +493,13 @@ dot-prop@^6.0.1:
   dependencies:
     is-obj "^2.0.0"
 
+engrave-kondor-js@0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/engrave-kondor-js/-/engrave-kondor-js-0.3.1.tgz#8e2ad98b944624fc43d5842a6bb45a747420e779"
+  integrity sha512-u/5ifE/7PQmSj5TD/fUPWQumGe7jnLL4PcLM/Mo5Si8y+rRXwHQD0H5VLpdVc1GTB1UGMnafqifhVWcUrQdU3w==
+  dependencies:
+    koilib "^5.0.0"
+
 entities@^2.0.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/entities/-/entities-2.2.0.tgz#098dc90ebb83d8dffa089d55256b351d34c4da55"
@@ -525,6 +542,11 @@ es-to-primitive@^1.2.1:
     is-callable "^1.1.4"
     is-date-object "^1.0.1"
     is-symbol "^1.0.2"
+
+es6-object-assign@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/es6-object-assign/-/es6-object-assign-1.1.0.tgz#c2c3582656247c39ea107cb1e6652b6f9f24523c"
+  integrity sha512-MEl9uirslVwqQU369iHNWZXsI8yaZYGg/D65aOgZkeyFJwHYSxilf7rQzXKI7DdDuBPrBXbfk3sl9hJhmd5AUw==
 
 esbuild-android-64@0.15.8:
   version "0.15.8"
@@ -901,6 +923,14 @@ is-glob@^4.0.1, is-glob@~4.0.1:
   dependencies:
     is-extglob "^2.1.1"
 
+is-nan@^1.2.1:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/is-nan/-/is-nan-1.3.2.tgz#043a54adea31748b55b6cd4e09aadafa69bd9e1d"
+  integrity sha512-E+zBKpQ2t6MEo1VsonYmluk9NxGrbzpeeLC2xIViuO2EjU2xsXsBPwTr3Ykv9l08UYEVEdWeRZNouaZqF6RN0w==
+  dependencies:
+    call-bind "^1.0.0"
+    define-properties "^1.1.3"
+
 is-negative-zero@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/is-negative-zero/-/is-negative-zero-2.0.2.tgz#7bf6f03a28003b8b3965de3ac26f664d765f3150"
@@ -986,6 +1016,17 @@ koilib@5.0.0:
     multibase "^4.0.6"
     protobufjs "^7.0.0"
 
+koilib@^5.0.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/koilib/-/koilib-5.1.0.tgz#50795f4825ee95bd69ad2a9bf864fa016c5ad161"
+  integrity sha512-hPXJ4ZOK7DHvxRaOABjEMXabWMeDrvl3m2pfCcaYP1IIUuPq6qfosZMb2j9CyZGDGpIhTHD+EmfgO8j0lmHC1g==
+  dependencies:
+    "@noble/hashes" "^1.1.2"
+    "@noble/secp256k1" "^1.6.3"
+    cross-fetch "^3.1.5"
+    multibase "^4.0.6"
+    protobufjs "^7.0.0"
+
 koinos-rpc@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/koinos-rpc/-/koinos-rpc-1.1.0.tgz#34a9f88f1ffceb69e0107f123798fee94acfd94f"
@@ -993,6 +1034,13 @@ koinos-rpc@1.1.0:
   dependencies:
     axios "0.27.2"
     verror "1.10.1"
+
+kondor-js@0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/kondor-js/-/kondor-js-0.3.0.tgz#341ef8c1a6d4d4f23fd2e471e7dd79fcbd1e4335"
+  integrity sha512-KDZ7TjsuFjML07/goCwfDBEdW+bGlyk2EQ7JXAGAJkn8k8bBGNQaDUF3FTZaMiB34R9YP1lqRsEMhOvhJEPj1w==
+  dependencies:
+    koilib "^5.0.0"
 
 lodash.isequal@^4.5.0:
   version "4.5.0"
@@ -1068,6 +1116,14 @@ object-inspect@^1.12.2, object-inspect@^1.9.0:
   version "1.12.2"
   resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.12.2.tgz#c0641f26394532f28ab8d796ab954e43c009a8ea"
   integrity sha512-z+cPxW0QGUp0mcqcsgQyLVRDoXFQbXOwBaqyF7VIgI4TWNQsDHrBpUQslRmIfAoYWdYzs6UlKJtB2XJpTaNSpQ==
+
+object-is@^1.0.1:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/object-is/-/object-is-1.1.5.tgz#b9deeaa5fc7f1846a0faecdceec138e5778f53ac"
+  integrity sha512-3cyDsyHgtmi7I7DfSSI2LDp6SK2lwvtbg0p0R1e0RvTqF5ceGx+K2dfSjm1bKDMVCFEDAQvy+o8c6a7VujOddw==
+  dependencies:
+    call-bind "^1.0.2"
+    define-properties "^1.1.3"
 
 object-keys@^1.1.1:
   version "1.1.1"
@@ -1373,7 +1429,7 @@ util-deprecate@^1.0.1:
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
 
-util@0.12.4:
+util@0.12.4, util@^0.12.0:
   version "0.12.4"
   resolved "https://registry.yarnpkg.com/util/-/util-0.12.4.tgz#66121a31420df8f01ca0c464be15dfa1d1850253"
   integrity sha512-bxZ9qtSlGUWSOy9Qa9Xgk11kSslpuZwaxCg4sNIDj6FLucDab2JxnHwyNTCpHMtK1MjoQiWQ6DiUMZYbSrO+Sw==

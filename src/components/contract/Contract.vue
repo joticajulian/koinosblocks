@@ -3,11 +3,19 @@
     <va-card class="offset--sm row ma-3" stripe stripe-color="info">
       <va-card-title>Contract {{ address }} details</va-card-title>
       <va-card-content>
-        <h1>Conctract methods</h1>
-        <SingleMethod v-for="method in methods" :key="method.name" :name="method.name" :details="method.details"
-                      :protos="protos" :address="address"/>
-
-        <br />
+        <div class="text--right">
+          <va-button @click="requestAccounts()">Connect Kondor</va-button>
+        </div>
+        <AuthorizedAccounts :accounts="accounts"/>
+        <h1 v-if="readOnlyMethods.length">Read only methods</h1>
+        <SingleMethod v-for="method in readOnlyMethods" :key="method.name" :name="method.name" :details="method.details"
+                      :protos="protos" :address="address" :abi="abis"
+                      :signers="authorizedSigners"/>
+        <h1 v-if="writableMethods.length" class="mt-2">Writable methods</h1>
+        <SingleMethod v-for="method in writableMethods" :key="method.name" :name="method.name" :details="method.details"
+                      :protos="protos" :address="address" :abi="abis"
+                      :signers="authorizedSigners"/>
+        <br/>
         <h1>Proto files</h1>
         <Proto v-for="proto in protos" :key="proto.name" :proto="proto"/>
       </va-card-content>
@@ -16,12 +24,14 @@
 </template>
 
 <script lang="ts">
-import MethodsList from "./MethodsList.vue";
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import * as koinosPbToProto from "@roamin/koinos-pb-to-proto";
 import {ProtoDescriptor} from "@roamin/koinos-pb-to-proto";
 import SingleMethod from "./SingleMethod.vue";
 import Proto from "./Proto.vue";
+import {useKondor} from "../../composable/useKondor";
+import AuthorizedAccounts from "./components/AuthorizedAccounts.vue";
+
 
 interface Abi {
   methods: {
@@ -44,7 +54,7 @@ interface Method {
 }
 
 export default {
-  components: {Proto, SingleMethod, MethodsList},
+  components: {AuthorizedAccounts, Proto, SingleMethod},
   props: {
     address: {
       type: String,
@@ -53,10 +63,20 @@ export default {
     abi: {
       type: Object,
       required: false
+    },
+    loading: {
+      type: Boolean,
+      required: true
     }
   },
 
   setup(props: any) {
+
+    const {accounts, requestAccounts} = useKondor();
+
+    const authorizedSigners = computed(() => {
+      return accounts.value.map(account => account.address);
+    });
 
     const extractMethods = (abi: Abi | null): Method[] => {
       if (!abi) {
@@ -80,7 +100,13 @@ export default {
 
     return {
       methods: computed(() => extractMethods(props.abi)),
-      protos: computed(() => decodeProtos(props.abi))
+      readOnlyMethods: computed(() => extractMethods(props.abi).filter((method: Method) => method.details['read-only'])),
+      writableMethods: computed(() => extractMethods(props.abi).filter((method: Method) => !method.details['read-only'])),
+      protos: computed(() => decodeProtos(props.abi)),
+      accounts,
+      authorizedSigners,
+      requestAccounts,
+      abis: props.abi
     }
   }
 }
@@ -94,5 +120,11 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+pre {
+  overflow: scroll;
+  max-width: 100%;
+  max-height: 500px;
 }
 </style>

@@ -1,11 +1,9 @@
 <template>
   <va-input
-      width="100%"
       class="mb-4"
       v-model="userInput"
       :label="argument.name"
       :placeholder="placeholder()"/>
-
 </template>
 <script lang="ts">
 
@@ -18,7 +16,7 @@ import {Argument} from "../../../composable/useClient";
 export default {
   props: {
     modelValue: {
-      type: Object, // TODO fix type to Uint8Array | String | null
+      type: [Object, String], // TODO fix type to Uint8Array | String | null
       default: ''
     },
     argument: {
@@ -29,10 +27,12 @@ export default {
 
   setup(props: any, context: any) {
     const userInput = ref("");
-    const encodedInput = ref<Uint8Array | string | null>(null);
+    const encodedInput = ref<Uint8Array | number | string | null>(null);
 
     const encodeValue = (value: any) => {
-      if (props.argument.details.type !== "bytes") return value;
+      console.log('encode value', value)
+      console.log(props.argument.details)
+      if (props.argument.details.type !== "bytes") return value; // TODO change and fix
 
       if (!props.argument.details?.options['(koinos.btype)']) {
         return utils.decodeBase64url(value);
@@ -79,3 +79,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.va-input {
+  width: 100%;
+}
+
+</style>

@@ -43,6 +43,7 @@ export default {
 .filename:hover {
   text-decoration: underline;
 }
+
 /* add indicator if it's shown or not, depends on toggle */
 .filename::after {
   content: "▼";

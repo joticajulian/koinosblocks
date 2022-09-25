@@ -1,6 +1,6 @@
 <template>
   <div class="data">
-    <span class="title" @click="toggle">{{on ? "Hide" : "Show"}} raw data</span>
+    <span class="title" @click="toggle">{{on ? "Hide" : "Show"}} {{ label }}</span>
     <pre v-if="on">{{ JSON.stringify(data, null, 2) }}</pre>
   </div>
 </template>
@@ -10,6 +10,11 @@ import {ref} from 'vue';
 export default {
   name: 'RawData',
   props: {
+    label: {
+      type: String,
+      required: false,
+      default: 'raw data'
+    },
     data: {
       type: Object,
       required: true

@@ -7,21 +7,20 @@
       </va-card-content>
     </va-card>
   </va-inner-loading>
-  <Contract v-if="isContract" :address="address" :abi="abi"/>
+  <Contract v-if="isContract" :address="address" :abi="abi" :loading="loading"/>
 </template>
 
 <script lang="ts">
-import {computed, Ref, ref} from 'vue'
+import {computed, Ref, ref, watch} from 'vue'
 import TransactionsTable from "./transaction/TransactionsTable.vue";
 import EventsTable from "./transaction/EventsTable.vue";
-import {Methods} from "../types/Method";
-import MethodsList from "./contract/MethodsList.vue";
+import {Methods} from "../types/Method";``
 import * as koinosPbToProto from "@roamin/koinos-pb-to-proto";
 import Contract from "./contract/Contract.vue";
 import {useClient} from "../composable/useClient";
 
 export default {
-  components: {Contract, MethodsList, EventsTable, TransactionsTable},
+  components: {Contract, EventsTable, TransactionsTable},
   props: {
     address: {
       type: String,
@@ -31,13 +30,15 @@ export default {
 
   async setup(props: any) {
 
-    let meta: Ref<any | null> = ref(null);
-    let protos: Ref<koinosPbToProto.ProtoDescriptor[] | null> = ref(null)
+    const meta: Ref<any | null> = ref(null);
+    const protos: Ref<koinosPbToProto.ProtoDescriptor[] | null> = ref(null)
     const loading = ref(true);
 
     const {client} = useClient();
 
     const getContractMeta = async (address: string) => {
+      loading.value = true;
+      meta.value = null;
       try {
         const {meta: receivedMeta} = await client.contractMetaStore.getContractMeta(address);
 
@@ -58,6 +59,14 @@ export default {
         loading.value = false;
       }
     }
+
+    watch(() => props.address, (address) => {
+      getContractMeta(address).then(() => {
+        console.log("done");
+      }).catch((e) => {
+        console.error(e);
+      });
+    });
 
     getContractMeta(props.address).then(() => {
       console.log("done");

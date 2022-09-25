@@ -12,15 +12,18 @@
 import {useRoute} from 'vue-router'
 import SingleTransaction from "../components/SingleTransaction.vue";
 import SingleAddress from "../components/SingleAddress.vue";
-import {ref} from "vue";
+import {ref, watch} from "vue";
 
 export default {
   name: 'Address',
   components: {SingleAddress, SingleTransaction},
   setup() {
     const route = useRoute();
-
     const address = ref(route.params.address);
+
+    watch(route, (route) => {
+      address.value = route.params.address;
+    });
 
     return {
       address
