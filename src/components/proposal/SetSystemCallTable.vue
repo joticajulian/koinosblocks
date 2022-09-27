@@ -53,11 +53,12 @@ export default {
  * */
 </script>
 
-<style>
-/* Add top margin to table */
+<style scoped>
+
 table {
   margin-top: 3rem;
 }
+
 a {
   color: #34495e;
 }

@@ -32,3 +32,18 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+
+table {
+  margin-top: 3rem;
+}
+
+a {
+  color: #34495e;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+</style>
