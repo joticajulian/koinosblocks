@@ -10,19 +10,11 @@
             <th>Contract</th>
             <th>Entrypoint</th>
             <th>Args</th>
+            <th>Action</th>
           </tr>
           </thead>
           <tbody>
-          <tr v-for="operation in operations" :key="operation">
-            <td>{{ Object.keys(operation)[0] }}</td>
-            <td>
-              <router-link :to="walletLink(operation[Object.keys(operation)[0]].contract_id)">
-                {{ operation[Object.keys(operation)[0]].contract_id }}
-              </router-link>
-            </td>
-            <td>{{ operation[Object.keys(operation)[0]].entry_point }}</td>
-            <td>{{ operation[Object.keys(operation)[0]].args }}</td>
-          </tr>
+          <Operation :operation="operation" :key="operation.id" v-for="operation in operations"/>
           </tbody>
         </table>
         <RawData :data="operations"/>
@@ -34,8 +26,9 @@
 <script lang="ts">
 
 import RawData from "../common/RawData.vue";
+import Operation from "./Operation.vue";
 export default {
-  components: {RawData},
+  components: {Operation, RawData},
   props: {
     operations: {
       type: Array,
@@ -45,11 +38,6 @@ export default {
       type: Boolean,
       required: true
     }
-  },
-  methods: {
-    walletLink: (address: string) => `/address/${address}`
   }
-
 }
-
 </script>

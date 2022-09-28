@@ -51,6 +51,7 @@ pre {
   max-width: 100%;
   max-height: 500px;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 .data {
   margin: 1em 0

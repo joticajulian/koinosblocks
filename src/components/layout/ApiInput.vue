@@ -4,16 +4,17 @@
       v-model="api"/>
   <va-button size="medium" @click="updateClientApi(api)">Set</va-button>
 </template>
+
 <script>
 import {ref} from 'vue';
-import {useClient} from "../../composable/useClient.ts";
-import {useToast} from 'vuestic-ui'
+import {useClient} from "../../composable/useClient";
+import {useNotification} from "../../composable/useNotification";
 
 export default {
   name: 'ApiInput',
   setup() {
-    const {init} = useToast()
     const {updateApiAddress} = useClient();
+    const {showSuccess} = useNotification();
 
     const api = ref(localStorage.getItem('api') || 'https://api.koinosblocks.com');
 
@@ -22,7 +23,8 @@ export default {
       updateClientApi: () => {
         localStorage.setItem('api', api.value);
         updateApiAddress(api.value)
-        init({message: 'API node updated', position: 'bottom-right', color: 'success'})
+
+        showSuccess('API node updated');
       }
     }
   }

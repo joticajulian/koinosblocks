@@ -20,7 +20,6 @@ import TransactionsTable from "./transaction/TransactionsTable.vue";
 import EventsTable from "./transaction/EventsTable.vue";
 import {Methods} from "../types/Method";
 
-``
 import * as koinosPbToProto from "@roamin/koinos-pb-to-proto";
 import Contract from "./contract/Contract.vue";
 import {useClient} from "../composable/useClient";
