@@ -18,7 +18,7 @@
               <router-link :to=toConctractLink(event.source)>{{ event.source }}</router-link>
             </td>
             <td>
-              <router-link v-for="wallet in event.impacted" :to=toConctractLink(wallet)>{{ wallet }}</router-link>
+              <router-link class="impacted" v-for="wallet in event.impacted" :to=toConctractLink(wallet)>{{ wallet }}</router-link>
             </td>
           </tr>
           </tbody>
@@ -50,3 +50,9 @@ export default {
 }
 
 </script>
+
+<style scoped>
+.impacted {
+  display: block;
+}
+</style>

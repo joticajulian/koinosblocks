@@ -4,20 +4,20 @@
       <va-card-title>Block details</va-card-title>
       <va-card-content>
         <div v-if="block_topology">
-          <DescriptionRow description="Block ID" :data="prepareBlocks([block_topology.id])"/>
+          <DescriptionRow description="Block ID" :data="prepareBlocks([block_topology.block_id])"/>
           <DescriptionRow description="Block height" :data="prepareBlocks([block_topology.block_height])"/>
-          <DescriptionRow description="Created at" :data="toDateTime(block_topology.header.timestamp)"/>
-          <DescriptionRow description="Previous block" :data="prepareBlocks([block_topology.header.previous])"/>
+          <DescriptionRow description="Created at" :data="toDateTime(block_topology.block.header.timestamp)"/>
+          <DescriptionRow description="Previous block" :data="prepareBlocks([block_topology.block.header.previous])"/>
           <DescriptionRow description="Compute bandwidth used"
                           :data="block_topology.receipt.compute_bandwidth_used ?? '0'"/>
           <DescriptionRow description="Disk storage used" :data="block_topology.receipt.disk_storage_used ?? '0'"/>
           <DescriptionRow description="Network bandwidth used"
                           :data="block_topology.receipt.network_bandwidth_used ?? '0' "/>
-          <DescriptionRow description="Transaction merkle root" :data="block_topology.header.transaction_merkle_root"/>
-          <DescriptionRow description="Producer" :data="prepareProducers([block_topology.header.signer])" />
-          <DescriptionRow description="Signature" :data="block_topology.signature"/>
-          <DescriptionRow v-if="block_topology.header.approved_proposals" description="Approved proposals"
-                          :data="prepareProposals(block_topology.header.approved_proposals)"/>
+          <DescriptionRow description="Transaction merkle root" :data="block_topology.block.header.transaction_merkle_root"/>
+          <DescriptionRow description="Producer" :data="prepareProducers([block_topology.block.header.signer])" />
+          <DescriptionRow description="Signature" :data="block_topology.block.signature"/>
+          <DescriptionRow v-if="block_topology.block.header.approved_proposals" description="Approved proposals"
+                          :data="prepareProposals(block_topology.block.header.approved_proposals)"/>
         </div>
         <RawData :data="block_topology"/>
       </va-card-content>
@@ -29,14 +29,14 @@
 </template>
 
 <script lang="ts">
-import {ref, watch} from 'vue'
+import {computed, ref, watch} from 'vue'
 import TransactionsTable from "./transaction/TransactionsTable.vue";
 import EventsTable from "./transaction/EventsTable.vue";
 import {useClient} from "../composable/useClient";
 import DescriptionRow from "./common/DescriptionRow.vue";
 import RawData from "./common/RawData.vue";
-import {Transaction} from "koinos-rpc/dist/service/TransactionStore";
 import moment from "moment/moment";
+import {Block, Transaction} from "koinos-rpc";
 
 export default {
   components: {RawData, DescriptionRow, EventsTable, TransactionsTable},
@@ -51,45 +51,48 @@ export default {
 
     const {client} = useClient();
 
-    let block_topology = ref(null);
-    let transactions = ref<Transaction[]>([]);
-    let events = ref<any[]>([]);
+    let block_topology = ref<Block | null>(null);
     const loading = ref(true);
+
+    const getBlock = async (id: string | string) => {
+      loading.value = true;
+      const {topology} = await client.blockStore.getHighestBlock();
+      if (id.startsWith('0x')) {
+        const {block_items} = await client.blockStore.getBlocksById([id]);
+        block_topology.value = block_items[0];
+      } else {
+        const {block_items} = await client.blockStore.getBlocksByHeight(topology.id, Number(id), 1);
+        block_topology.value = block_items[0];
+      }
+      loading.value = false;
+    }
+
+    getBlock(props.id).catch((e) => {
+      console.error(e);
+    });
 
     watch(() => props.id, async () => {
       await getBlock(props.id);
     });
 
-    const getBlock = async (id: string | string) => {
-      loading.value = true;
-      let res;
-      const {topology} = await client.blockStore.getHighestBlock();
-      if (id.startsWith('0x')) {
-        res = await client.blockStore.getBlocksById([id]);
-      } else {
-        res = await client.blockStore.getBlocksByHeight(topology.id, Number(id), 1);
+    const transactions = computed(() => {
+      return block_topology.value?.block?.transactions;
+    })
+
+    const events = computed(() => {
+      const events = [];
+      if (block_topology.value) {
+        events.push(...block_topology.value?.receipt?.events);
       }
-
-      console.log(res.block_items);
-
-      block_topology.value = {
-        block_height: res.block_items[0].block_height,
-        block_id: res.block_items[0].block_id,
-        header: res.block_items[0].block.header,
-        id: res.block_items[0].block.id,
-        receipt: res.block_items[0].receipt,
-        signature: res.block_items[0].block.signature, // TODO fix type in koinos-rpc
+      if (block_topology.value?.receipt?.transaction_receipts) {
+        block_topology.value.receipt?.transaction_receipts.reduce((acc, cur) => {
+          acc.push(...cur.events);
+          return acc;
+        }, events);
       }
-      transactions.value = res.block_items[0].block.transactions;
-      events.value = res.block_items[0].receipt.events;
-      loading.value = false;
-    }
+      return events;
+    })
 
-    getBlock(props.id).then(() => {
-      console.log("done");
-    }).catch((e) => {
-      console.error(e);
-    });
 
     return {
       block_topology,
