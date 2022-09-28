@@ -16,9 +16,12 @@ export default {
 
 </script>
 
-<style scoped>
+<style>
+@import "assets/global.css";
+
 #main {
   margin: 0 auto;
   max-width: 1400px;
 }
 </style>
+

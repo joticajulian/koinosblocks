@@ -121,14 +121,3 @@ export default {
 }
 
 </script>
-
-<style scoped>
-a {
-  color: #34495e;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-</style>
