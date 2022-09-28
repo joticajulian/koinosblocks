@@ -13,15 +13,26 @@
     <!--    <template #center>-->
     <!--      <va-navbar-item>Center</va-navbar-item>-->
     <!--    </template>-->
-    <!--    <template #right>-->
-    <!--      <va-navbar-item>Right</va-navbar-item>-->
-    <!--    </template>-->
+        <template #right>
+          <va-navbar-item>
+            <a href="https://gitlab.com/engrave/koinos/koinosblocks" target="_blank" rel="noopener noreferrer">
+              <img :src="gitlab" />
+            </a>
+
+          </va-navbar-item>
+        </template>
   </va-navbar>
 </template>
 
 <script>
+import gitlab from '/icons/gitlab.svg'
 export default {
   name: 'Footer',
+  data() {
+    return {
+      gitlab
+    }
+  }
 };
 </script>
 
