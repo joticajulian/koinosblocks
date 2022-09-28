@@ -7,7 +7,8 @@
       <div class="method-content">
         <pre>{{ source }}</pre>
         <RawData v-if="fields.length" :data="fields" label="arguments proto"/>
-        <p class="not-authorized" v-if="!isReadOnly && !isKondorConnected">You need to connect Kondor wallet in order to write to contract</p>
+        <p class="not-authorized" v-if="!isReadOnly && !isKondorConnected">You need to connect Kondor wallet in order to
+          write to contract</p>
         <va-form>
           <ContractInputField
               v-if="isReadOnly || isKondorConnected"
@@ -39,7 +40,9 @@
           <pre v-if="res">Response: {{ JSON.stringify(res, null, 2) }}</pre>
           <div v-if="txReceipt">
             <span>
-              Transaction with ID <router-link :to="`/tx/` + txReceipt.id">{{ txReceipt.id }}</router-link> created, {{txReceipt.rc_used}} mana used.
+              Transaction with ID <router-link :to="`/tx/` + txReceipt.id">{{
+                txReceipt.id
+              }}</router-link> created, {{ txReceipt.rc_used }} mana used.
             </span>
             <RawData :data="txReceipt" label="transaction receipt"/>
           </div>
@@ -109,8 +112,7 @@ export default {
       for (const proto of props.protos) {
         try {
           protobuf.parse(proto.definition, root, {keepCase: true});
-        } catch (e) {
-          console.log('error', e)
+        } catch (_e) {
         }
       }
 
@@ -121,10 +123,21 @@ export default {
       return root.lookupType(type_description)
     }
 
-    const prepareContractArguments = (type: string, input: any): string => {
+    const encodeArguments = (type: string, input: any): string => {
+      if (type == "") {
+        return "";
+      }
       const inputType = getType(type);
       const message = inputType.create(input)
       return utils.encodeBase64url(Buffer.from(inputType.encode(message!).finish()))
+    }
+
+    const decodeReturn = (type: string, result: string): any => {
+      if (type == "") {
+        return result
+      }
+      const buffer = utils.decodeBase64url(result);
+      return getType(type).decode(buffer).toJSON();
     }
 
     const fields = computed<Argument[]>((): Argument[] => {
@@ -148,20 +161,11 @@ export default {
       try {
         res.value = null;
         error.value = null;
-        const {result} = await client.call('chain', 'read_contract', {
-          args: prepareContractArguments(argumentType, {...arg}),
-          contract_id: props.address,
-          entry_point: parseInt(props.details['entry-point'], 16)
-        });
-
-        console.log(result);
-
+        const {result} = await client.chain.readContract(props.address, parseInt(props.details['entry-point'], 16), encodeArguments(argumentType, {...arg}));
         if (!result) {
           return;
         }
-
-        const buffer = utils.decodeBase64url(result);
-        res.value = getType(responseType).decode(buffer).toJSON();
+        res.value = decodeReturn(responseType, result);
       } catch (e: any) {
         error.value = e.message;
       }
@@ -178,7 +182,7 @@ export default {
           operations: [
             {
               call_contract: {
-                args: prepareContractArguments(argumentType, {...arg}),
+                args: encodeArguments(argumentType, {...arg}),
                 contract_id: props.address,
                 entry_point: parseInt(props.details['entry-point'], 16)
               }
