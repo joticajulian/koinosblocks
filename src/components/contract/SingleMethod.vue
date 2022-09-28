@@ -7,9 +7,7 @@
       <div class="method-content">
         <pre>{{ source }}</pre>
         <RawData v-if="fields.length" :data="fields" label="arguments proto"/>
-
         <p class="not-authorized" v-if="!isReadOnly && !isKondorConnected">You need to connect Kondor wallet in order to write to contract</p>
-
         <va-form>
           <ContractInputField
               v-if="isReadOnly || isKondorConnected"
@@ -110,7 +108,7 @@ export default {
       const root = new protobuf.Root();
       for (const proto of props.protos) {
         try {
-          protobuf.parse(proto.definition, root, {keepCase: true}); // TODO set keepCase true and fix all methods
+          protobuf.parse(proto.definition, root, {keepCase: true});
         } catch (e) {
           console.log('error', e)
         }
@@ -130,12 +128,9 @@ export default {
     }
 
     const fields = computed<Argument[]>((): Argument[] => {
-
-      // TODO use single root for all types
-
       for (const proto of props.protos) {
         try {
-          const parse = protobuf.parse(proto.definition);
+          const parse = protobuf.parse(proto.definition, {keepCase: true});
           const type = parse.root.lookup(props.details.argument)
           return Object.keys(type.fields).map((name) => {
             return {
@@ -246,6 +241,14 @@ export default {
 
 .method-content {
   padding: 10px;
+}
+
+a {
+  color: #34495e;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 
 </style>

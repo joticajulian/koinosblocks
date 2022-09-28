@@ -78,10 +78,6 @@ export default {
 
       const {result} = await client.chain.readContract('1NsnpSsXJDgPTFgFXRiP8F3Acg9gj6VjUi', 0xc66013ad, args);
       const buf = base64url.toBuffer(result);
-      // const test = returnType?.decode(buf);
-      // console.log(test);
-      // const {value} = returnType.toObject(test, {defaults: true, arrays: true, longs: String, enums: String, bytes: String});
-      // console.log(value);
       const {value} = returnType?.decode(buf).toJSON();
       details.value = value;
     }
