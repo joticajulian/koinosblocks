@@ -8,7 +8,7 @@
         <DescriptionRow description="Vote tally" :data="details.vote_tally ?? '0'"/>
         <DescriptionRow description="Shall authorize" :data="details.shall_authorize ?? 'false'"/>
         <DescriptionRow description="Updates governance" :data="details.updates_governance ?? 'false'"/>
-        <DescriptionRow description="Status" :data="getStatus(details.status ?? 0)"/>
+        <DescriptionRow description="Status" :data="details.status ?? 'pending'"/>
         <DescriptionRow description="Operation merkle root" :data="details.operation_merkle_root"/>
         <DescriptionRow description="Fee" :data="details.fee"/>
         <RawData v-if="details" :data="details"/>
@@ -96,32 +96,10 @@ export default {
       console.log(e);
     });
 
-    const getStatus = (status: number): string => {
-      switch (status) {
-        case 0:
-          return 'pending';
-        case 1:
-          return 'active';
-        case 2:
-          return 'approved';
-        case 3:
-          return 'expired';
-        case 4:
-          return 'applied';
-        case 5:
-          return 'failed';
-        case 6:
-          return 'reverted';
-        default:
-          return 'unknown';
-      }
-    }
-
     return {
       id,
       loading,
       details,
-      getStatus,
       toProposalId: (root: string) => `0x${utils.toHexString(utils.decodeBase64(root))}`
     }
   }
