@@ -82,7 +82,7 @@ export default {
     const events = computed(() => {
       const events = [];
       if (block_topology.value) {
-        events.push(...block_topology.value?.receipt?.events);
+        events.push(...block_topology.value?.receipt?.events!);
       }
       if (block_topology.value?.receipt?.transaction_receipts) {
         block_topology.value.receipt?.transaction_receipts.reduce((acc, cur) => {

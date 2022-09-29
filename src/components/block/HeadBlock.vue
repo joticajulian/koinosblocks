@@ -26,14 +26,13 @@ export default {
   components: {DescriptionRow},
   async setup() {
 
+    const {client} = useClient();
+
     let headInfo = ref<any>(null);
     const loading = ref(true);
 
     const updateBlocks = async () => {
-      const {client} = useClient();
-      const res = await client.chain.getHeadInfo();
-      console.log(res);
-      headInfo.value = res;
+      headInfo.value = await client.chain.getHeadInfo();
       loading.value = false;
     }
 

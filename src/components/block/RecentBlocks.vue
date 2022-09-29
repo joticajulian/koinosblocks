@@ -35,7 +35,7 @@
               </router-link>
             </td>
             <td>{{ block.block.transactions?.length ?? "0" }}</td>
-            <td>{{ block.receipt.events.length }}</td>
+            <td>{{ countEvents(block) }}</td>
           </tr>
           </tbody>
         </table>
@@ -45,33 +45,22 @@
 </template>
 
 <script lang="ts">
-import {onBeforeUnmount, ref} from 'vue'
+import {computed, onBeforeUnmount, ref} from 'vue'
 import moment from "moment";
 import {useClient} from "../../composable/useClient";
+import {Block} from "koinos-rpc";
 
 export default {
 
-  methods: {
-    toRelativeTime: (timestamp: number) => {
-      return moment.unix(timestamp / 1000).fromNow()
-    },
-    toDateTime: (timestamp: number) => {
-      return moment.unix(timestamp / 1000).format("YYYY-MM-DD HH:mm:ss")
-    },
-    blockLink: (blockId: string) => `/block/${blockId}`,
-    walletLink: (address: string) => `/address/${address}`
-  },
-
   async setup() {
 
-    let blocks = ref([]);
+    const blocks = ref<Block[]>([]);
     const loading = ref(true);
 
     const updateBlocks = async () => {
       const {client} = useClient();
       const {topology} = await client.blockStore.getHighestBlock();
       const {block_items} = await client.blockStore.getBlocksByHeight(topology.id, topology.height - 19, 20);
-      console.log(block_items);
       blocks.value = block_items.reverse();
       loading.value = false;
     }
@@ -82,9 +71,27 @@ export default {
       clearInterval(intervalHandle);
     });
 
+    const countEvents = (block: Block) => {
+      let count = 0;
+      count += (block.receipt?.events.length ?? 0);
+      if (block.receipt?.transaction_receipts) {
+        count += block.receipt?.transaction_receipts.reduce((acc, tx) => acc + tx.events.length, 0) ?? 0
+      }
+      return count;
+    }
+
     return {
       blocks,
       loading,
+      countEvents,
+      toRelativeTime: (timestamp: number) => {
+        return moment.unix(timestamp / 1000).fromNow()
+      },
+      toDateTime: (timestamp: number) => {
+        return moment.unix(timestamp / 1000).format("YYYY-MM-DD HH:mm:ss")
+      },
+      blockLink: (blockId: string) => `/block/${blockId}`,
+      walletLink: (address: string) => `/address/${address}`
     }
   }
 }
