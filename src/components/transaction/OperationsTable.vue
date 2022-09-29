@@ -14,7 +14,7 @@
           </tr>
           </thead>
           <tbody>
-          <Operation :operation="operation" :key="operation.id" v-for="operation in operations"/>
+          <OperationRow :operation="operation" :key="operation.id" v-for="operation in operations"/>
           </tbody>
         </table>
         <RawData :data="operations"/>
@@ -26,9 +26,9 @@
 <script lang="ts">
 
 import RawData from "../common/RawData.vue";
-import Operation from "./Operation.vue";
+import OperationRow from "./OperationRow.vue";
 export default {
-  components: {Operation, RawData},
+  components: {OperationRow, RawData},
   props: {
     operations: {
       type: Array,

@@ -47,9 +47,9 @@ pre {
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 10px;
-  overflow: scroll;
   max-width: 100%;
   max-height: 500px;
+  overflow: scroll;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }

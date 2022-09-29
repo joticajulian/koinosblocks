@@ -1,7 +1,8 @@
-import {parse, Root} from "protobufjs";
+import {parse, Root, Type} from "protobufjs";
 import {useClient} from "./useClient";
 import * as koinosPbToProto from "@roamin/koinos-pb-to-proto";
 import {ProtoDescriptor} from "@roamin/koinos-pb-to-proto";
+import {utils} from "koilib";
 
 export interface ContractMeta {
     abi: any | null;
@@ -45,7 +46,41 @@ export function useContract() {
         return root;
     }
 
+    // TODO make it recursive
+    const normalize = (type: Type, decoded: any): any => {
+        const normalized: any = {};
+        for(const name of Object.keys(type.fields)) {
+            const field = type.fields[name];
+
+            if (field.type !== 'bytes' || !field.options) {
+                normalized[field.name] = decoded[field.name];
+                continue;
+            }
+
+            switch (field.options['(koinos.btype)']) {
+                case "BASE58":
+                case "CONTRACT_ID":
+                case "ADDRESS":
+                    normalized[field.name] = utils.encodeBase58(decoded[field.name]);
+                    break;
+                case "BASE64":
+                    normalized[field.name] = utils.encodeBase64url(decoded[field.name]);
+                    break;
+                case "HEX":
+                case "BLOCK_ID":
+                case "TRANSACTION_ID":
+                    normalized[field.name] = `0x${utils.toHexString(decoded[field.name])}`;
+                    break;
+                default:
+                    normalized[field.name] = decoded[field.name];
+            }
+        }
+        return normalized;
+    }
+
+
     return {
-        fetchContractMeta
+        fetchContractMeta,
+        normalize
     }
 }

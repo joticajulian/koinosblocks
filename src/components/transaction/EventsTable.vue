@@ -9,18 +9,12 @@
             <th>Name</th>
             <th>Source</th>
             <th>Impacted</th>
+            <th>Data</th>
+            <th>Action</th>
           </tr>
           </thead>
           <tbody>
-          <tr v-for="event in events" :key="event.id">
-            <td>{{ event.name }}</td>
-            <td>
-              <router-link :to=toConctractLink(event.source)>{{ event.source }}</router-link>
-            </td>
-            <td>
-              <router-link class="impacted" v-for="wallet in event.impacted" :to=toConctractLink(wallet)>{{ wallet }}</router-link>
-            </td>
-          </tr>
+          <EventRow :event="event" v-for="event in events" :key="event.id"/>
           </tbody>
         </table>
         <RawData :data="events"/>
@@ -32,8 +26,9 @@
 <script lang="ts">
 
 import RawData from "../common/RawData.vue";
+import EventRow from "./EventRow.vue";
 export default {
-  components: {RawData},
+  components: {EventRow, RawData},
   props: {
     events: {
       type: Array,
@@ -43,16 +38,11 @@ export default {
       type: Boolean,
       required: true
     }
-  },
-  methods: {
-    toConctractLink: (address: string) => `/address/${address}`
   }
 }
 
 </script>
 
 <style scoped>
-.impacted {
-  display: block;
-}
+
 </style>
