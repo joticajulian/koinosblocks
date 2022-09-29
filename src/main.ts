@@ -25,7 +25,7 @@ const router = createRouter({history: createWebHistory(), routes});
 
 router.beforeEach((to, from, next) => {
     // @ts-ignore
-    document.title = to?.meta?.title ?? 'Koinosblocks.com - Koinos blockchain Explorer';
+    document.title = to?.meta?.title ?? 'Koinosblocks.com - Koinos blockchain explorer';
     next();
 });
 
