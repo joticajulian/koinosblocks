@@ -9,11 +9,11 @@
         <AuthorizedAccounts :accounts="accounts"/>
         <h1 v-if="readOnlyMethods.length">Read only methods</h1>
         <SingleMethod v-for="method in readOnlyMethods" :key="method.name" :name="method.name" :details="method.details"
-                      :protos="protos" :address="address" :abi="abis"
+                      :address="address" :abi="abi" :root="root"
                       :signers="authorizedSigners"/>
         <h1 v-if="writableMethods.length" class="mt-2">Writable methods</h1>
         <SingleMethod v-for="method in writableMethods" :key="method.name" :name="method.name" :details="method.details"
-                      :protos="protos" :address="address" :abi="abis"
+                      :address="address" :abi="abi" :root="root"
                       :signers="authorizedSigners"/>
         <br/>
         <h1>Proto files</h1>
@@ -24,14 +24,13 @@
 </template>
 
 <script lang="ts">
-import {computed, ref} from "vue";
-import * as koinosPbToProto from "@roamin/koinos-pb-to-proto";
-import {ProtoDescriptor} from "@roamin/koinos-pb-to-proto";
+import {computed} from "vue";
 import SingleMethod from "./SingleMethod.vue";
 import Proto from "./Proto.vue";
 import {useKondor} from "../../composable/useKondor";
 import AuthorizedAccounts from "./components/AuthorizedAccounts.vue";
-
+import {Root} from "protobufjs";
+import {ProtoDescriptor} from "@roamin/koinos-pb-to-proto";
 
 interface Abi {
   methods: {
@@ -62,7 +61,15 @@ export default {
     },
     abi: {
       type: Object,
-      required: false
+      required: true
+    },
+    root: {
+      type: Root,
+      require: true
+    },
+    protos: {
+      type: Object as () => ProtoDescriptor[],
+      required: true
     },
     loading: {
       type: Boolean,
@@ -90,23 +97,13 @@ export default {
       })
     }
 
-    const decodeProtos = (abi: Abi | null): ProtoDescriptor[] => {
-      console.log('abi', abi);
-      if (!abi) {
-        return [];
-      }
-      return koinosPbToProto.convert(abi.types)
-    };
-
     return {
       methods: computed(() => extractMethods(props.abi)),
       readOnlyMethods: computed(() => extractMethods(props.abi).filter((method: Method) => method.details['read-only'])),
       writableMethods: computed(() => extractMethods(props.abi).filter((method: Method) => !method.details['read-only'])),
-      protos: computed(() => decodeProtos(props.abi)),
       accounts,
       authorizedSigners,
       requestAccounts,
-      abis: props.abi
     }
   }
 }

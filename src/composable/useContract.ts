@@ -1,12 +1,12 @@
-import {reactive, Ref, ref} from 'vue'
-import {Field, parse, Root} from "protobufjs";
+import {parse, Root} from "protobufjs";
 import {useClient} from "./useClient";
 import * as koinosPbToProto from "@roamin/koinos-pb-to-proto";
-import {useToast} from "vuestic-ui";
+import {ProtoDescriptor} from "@roamin/koinos-pb-to-proto";
 
 export interface ContractMeta {
     abi: any | null;
     root: Root | null;
+    protos: ProtoDescriptor[] | null;
 }
 
 export function useContract() {
@@ -21,26 +21,31 @@ export function useContract() {
             const root = parseProtos(protos);
             return {
                 abi,
-                root
+                root,
+                protos
             }
         } catch (e) {
             console.error(e);
             return {
                 abi: null,
-                root: null
+                root: null,
+                protos: null
             }
         }
     }
 
-    const parseProtos = (protos: any[]): Root => {
+    const parseProtos = (protos: ProtoDescriptor[]): Root => {
         const root = new Root();
-        for (const proto of protos){
-            parse(proto.definition, root, {keepCase: true})
+        for (const proto of protos) {
+            try {
+                parse(proto.definition, root, {keepCase: true})
+            } catch (e) {
+            }
         }
         return root;
     }
 
-    return reactive({
-        fetchContractMeta,
-    })
+    return {
+        fetchContractMeta
+    }
 }

@@ -1,7 +1,12 @@
 import {ref} from "vue";
 import * as kondor from "engrave-kondor-js";
 
-const accounts = ref([]);
+export interface KondorAccount {
+    name: string;
+    address: string;
+}
+
+const accounts = ref<KondorAccount[]>([]);
 
 export function useKondor() {
 

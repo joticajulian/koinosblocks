@@ -61,7 +61,7 @@ import {Argument, useClient} from "../../composable/useClient";
 import ContractInputField from "./contractForm/ContractInputField.vue";
 import {useKondor} from "../../composable/useKondor";
 import {utils} from "koilib";
-import {INamespace, Type} from "protobufjs";
+import {INamespace, Root, Type} from "protobufjs";
 import RawData from "../common/RawData.vue";
 
 export default {
@@ -83,8 +83,8 @@ export default {
       type: Object,
       required: true
     },
-    protos: {
-      type: Array,
+    root: {
+      type: Object as () => Root,
       required: true
     },
     signers: {
@@ -95,33 +95,18 @@ export default {
 
   setup(props: any) {
 
-    let res: Ref<any | null> = ref(null)
+    let res = ref<any | null>(null)
     let arg = reactive({});
 
     const txReceipt = ref(null);
 
     const error = ref(null);
-    const abis = ref<INamespace | null>(null);
-    const selectedSigner = ref<string>(null);
+    const selectedSigner = ref<string | null>(null);
 
     const {client} = useClient();
     const {getSigner} = useKondor();
 
-    const getType = (type_description: string): Type => {
-      const root = new protobuf.Root();
-      for (const proto of props.protos) {
-        try {
-          protobuf.parse(proto.definition, root, {keepCase: true});
-        } catch (_e) {
-        }
-      }
-
-      abis.value = root.toJSON();
-
-      console.log(abis.value);
-
-      return root.lookupType(type_description)
-    }
+    const getType = (type_description: string): Type => props.root.lookupType(type_description)
 
     const encodeArguments = (type: string, input: any): string => {
       if (type == "") {
@@ -141,21 +126,34 @@ export default {
     }
 
     const fields = computed<Argument[]>((): Argument[] => {
-      for (const proto of props.protos) {
-        try {
-          const parse = protobuf.parse(proto.definition, {keepCase: true});
-          const type = parse.root.lookup(props.details.argument)
-          return Object.keys(type.fields).map((name) => {
-            return {
-              name: name,
-              details: type.fields[name]
-            }
-          });
-        } catch (e) {
-        }
+      if (!props.root) {
+        return [];
       }
+      console.log(props.details.argument);
+      console.log(props.root);
+      const type = props.root.lookup(props.details.argument)
+      console.log('type', type);
+      if (!type) {
+        return []
+      }
+      return Object.keys(type.fields).map((name) => {
+        return {
+          name: name,
+          details: type.fields[name]
+        }
+      });
       return [];
     })
+
+    const convertEntryPoints = (methods: any) => {
+      return Object.keys(methods).reduce((acc: any, key: string) => {
+        acc[key] = {
+          ...methods[key],
+          'entry_point': parseInt(methods[key]['entry-point'], 16)
+        };
+        return acc;
+      }, {})
+    }
 
     const readContract = async (argumentType: string, responseType: string) => {
       try {
@@ -177,7 +175,7 @@ export default {
         txReceipt.value = null;
         error.value = null;
 
-        const signer = await getSigner(selectedSigner.value);
+        const signer = await getSigner(selectedSigner.value!); // TODO prevent from clicking until form is filled
         const tx = await signer.prepareTransaction({
           operations: [
             {
@@ -190,25 +188,19 @@ export default {
           ]
         })
 
-        console.log('pre signing abi', props.abi)
-
-        const abisToSend = {
-          main: {
-            methods: props.abi.methods,
-            koilib_types: abis.value,
-            types: abis.value
+        const abis = {
+          [props.address]: {
+            methods: convertEntryPoints(props.abi.methods),
+            koilib_types: props.root
           }
         };
 
-        console.log('abisToSend', abisToSend)
-
-        const signedTx = await signer.signTransaction(tx, abisToSend)
+        const signedTx = await signer.signTransaction(tx, abis)
 
         const {receipt} = await client.call('chain', 'submit_transaction', {
           transaction: signedTx,
           broadcast: true
         });
-
         console.log(receipt);
         txReceipt.value = receipt
       } catch (e: any) {

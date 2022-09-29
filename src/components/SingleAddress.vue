@@ -5,25 +5,22 @@
       <va-card-content>
         <ul v-if="balances.length">
           <li v-for="balance in balances">
-            <span>{{ balance }}</span>
+            <span>{{ balance.amount }} {{balance.symbol}}</span>
           </li>
         </ul>
       </va-card-content>
     </va-card>
   </va-inner-loading>
-  <Contract v-if="isContract" :address="address" :abi="abi" :loading="loading"/>
+  <Contract v-if="isContract" :address="address" :abi="meta.abi" :root="meta.root" :protos="meta.protos" :loading="loading"/>
 </template>
 
 <script lang="ts">
-import {computed, Ref, ref, watch} from 'vue'
+import {computed, ref, watch} from 'vue'
 import TransactionsTable from "./transaction/TransactionsTable.vue";
 import EventsTable from "./transaction/EventsTable.vue";
-import {Methods} from "../types/Method";
-
-import * as koinosPbToProto from "@roamin/koinos-pb-to-proto";
 import Contract from "./contract/Contract.vue";
-import {useClient} from "../composable/useClient";
 import {useToken} from "../composable/useToken";
+import {ContractMeta, useContract} from "../composable/useContract";
 
 export default {
   components: {Contract, EventsTable, TransactionsTable},
@@ -38,38 +35,21 @@ export default {
 
     const tokens = ['19JntSm8pSNETT9aHTwAUHC5RMoaSmgZPJ', '1JZqj7dDrK5LzvdJgufYBJNUFo88xBoWC8']
 
-    const meta: Ref<any | null> = ref(null);
-    const protos: Ref<koinosPbToProto.ProtoDescriptor[] | null> = ref(null)
+    const meta = ref<ContractMeta>({root: null, abi: null});
     const loading = ref(true);
-    const balances = ref<string[]>([]);
+    const balances = ref<{amount: number, symbol: string}[]>([]);
 
-    const {client} = useClient();
     const {createToken} = useToken();
-
-    const getContractMeta = async (address: string) => {
-      meta.value = null;
-      try {
-        const {meta: receivedMeta} = await client.contractMetaStore.getContractMeta(address);
-        if (!receivedMeta) {
-          return;
-        }
-        meta.value = receivedMeta;
-        try {
-          const abi = JSON.parse(receivedMeta.abi);
-          protos.value = koinosPbToProto.convert(abi.types);
-        } catch (e) {
-          console.error(e);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
+    const {fetchContractMeta} = useContract();
 
     const getTokenValue = async (contractId: string, address: string) => {
       try {
         const koin = await createToken(contractId)
-        const balance = await koin.getBalance(address)
-        balances.value.push(balance)
+        const precision = await koin.getPrecision()
+        const balance = await koin.getBalance(address, true)
+        const symbol = await koin.getSymbol()
+        const amount = Number(balance) / Math.pow(10, precision)
+        balances.value.push({amount, symbol})
       } catch (e) {
         console.error(e)
       }
@@ -79,10 +59,8 @@ export default {
       try {
         loading.value = true;
         balances.value = [];
-        await getContractMeta(props.address)
+        meta.value = await fetchContractMeta(address);
         await Promise.all(tokens.map(async (token) => getTokenValue(token, address)));
-      } catch (e) {
-        console.error(e);
       } finally {
         loading.value = false;
       }
@@ -92,33 +70,11 @@ export default {
 
     setTimeout(() => refreshData(props.address),1);
 
-    const methods = computed((): Methods | undefined => {
-      if (!meta.value) {
-        return {};
-      }
-      // @ts-ignore
-      return JSON.parse(meta.value.abi).methods;
-    });
-
     return {
-      isContract: computed(() => meta.value),
+      isContract: computed(() => meta.value?.abi && meta.value?.root),
       meta,
-      // @ts-ignore
-      abi: computed(() => {
-        if (!meta.value?.abi) {
-          return null;
-        }
-        try {
-          return JSON.parse(meta.value.abi);
-        } catch (e) {
-          console.error(e);
-          return null;
-        }
-      }),
-      protos,
-      methods,
       loading,
-      balances
+      balances: computed(() => balances.value.sort((a, b) => a.symbol.localeCompare(b.symbol)))
     }
   }
 }
