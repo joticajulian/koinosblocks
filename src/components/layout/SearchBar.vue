@@ -127,7 +127,7 @@ export default {
 
 .search-bar {
   width: 100%;
-  margin-right: 5px;
+  margin: 40px 0 40px 0;
   align-content: center;
   justify-content: center;
   display: flex;
