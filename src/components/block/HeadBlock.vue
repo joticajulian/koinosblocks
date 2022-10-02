@@ -25,7 +25,7 @@ import {useInterval} from "../../composable/useInterval";
 
 export default {
   components: {DescriptionRow},
-  async setup() {
+  setup() {
 
     const {client} = useClient();
     const {set} = useInterval();

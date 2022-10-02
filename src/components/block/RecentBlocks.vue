@@ -53,7 +53,7 @@ import {useInterval} from "../../composable/useInterval";
 
 export default {
 
-  async setup() {
+  setup() {
 
     const {set} = useInterval();
 
