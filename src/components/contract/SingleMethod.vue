@@ -129,11 +129,8 @@ export default {
       if (!props.root) {
         return [];
       }
-      console.log(props.details.argument);
-      console.log(props.root);
       const type = props.root.lookup(props.details.argument)
-      console.log('type', type);
-      if (!type) {
+      if (!type || !type.fields) {
         return []
       }
       return Object.keys(type.fields).map((name) => {
