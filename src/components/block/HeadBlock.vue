@@ -21,12 +21,14 @@ import {onBeforeUnmount, Ref, ref} from 'vue'
 import {useClient} from "../../composable/useClient";
 import DescriptionRow from "../common/DescriptionRow.vue";
 import moment from "moment";
+import {useInterval} from "../../composable/useInterval";
 
 export default {
   components: {DescriptionRow},
   async setup() {
 
     const {client} = useClient();
+    const {set} = useInterval();
 
     let headInfo = ref<any>(null);
     const loading = ref(true);
@@ -36,11 +38,7 @@ export default {
       loading.value = false;
     }
 
-    const intervalHandle = setInterval(updateBlocks, 1000);
-
-    onBeforeUnmount(() => {
-      clearInterval(intervalHandle);
-    });
+    set(updateBlocks, 1000);
 
     return {
       headInfo,

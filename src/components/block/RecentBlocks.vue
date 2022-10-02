@@ -49,10 +49,13 @@ import {computed, onBeforeUnmount, ref} from 'vue'
 import moment from "moment";
 import {useClient} from "../../composable/useClient";
 import {Block} from "koinos-rpc";
+import {useInterval} from "../../composable/useInterval";
 
 export default {
 
   async setup() {
+
+    const {set} = useInterval();
 
     const blocks = ref<Block[]>([]);
     const loading = ref(true);
@@ -65,11 +68,7 @@ export default {
       loading.value = false;
     }
 
-    const intervalHandle = setInterval(updateBlocks, 1000);
-
-    onBeforeUnmount(() => {
-      clearInterval(intervalHandle);
-    });
+    set(updateBlocks, 1000);
 
     const countEvents = (block: Block) => {
       let count = 0;
