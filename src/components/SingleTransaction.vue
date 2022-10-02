@@ -4,7 +4,8 @@
       <va-card-title>Transaction details</va-card-title>
       <va-card-content v-if="!loading && !transactionExists">
         <va-alert color="info" :title="'Transaction not found'" center class="mb-4 mt-4">
-          Looks like the transaction you're looking for does not exists or is not included in a block yet. Please note that it takes some time to include transaction in a block. If you believe this
+          Looks like the transaction you're looking for does not exists or is not included in a block yet. Please note
+          that it takes some time to include transaction in a block. If you believe this
           transaction ID is valid, please try again in few minutes.
         </va-alert>
       </va-card-content>
@@ -12,12 +13,23 @@
         <DescriptionRow v-if="transaction" description="Transaction ID"
                         :data="prepareTransactions([transaction.transaction.id])"/>
         <DescriptionRow v-if="transaction" description="Chain ID" :data="transaction.transaction.header.chain_id"/>
+        <DescriptionRow v-if="transaction" description="Payer"
+                        :data="preparePayers([transaction.transaction.header.payer])"/>
+        <DescriptionRow v-if="transaction && transaction.receipt" description="Max payer RC"
+                        :data="transaction.receipt.max_payer_rc"/>
         <DescriptionRow v-if="transaction" description="RC limit" :data="transaction.transaction.header.rc_limit"/>
+        <DescriptionRow v-if="transaction && transaction.receipt" description="RC used"
+                        :data="transaction.receipt.rc_used"/>
+        <DescriptionRow v-if="transaction && transaction.receipt" description="Disk storage used"
+                        :data="transaction.receipt.disk_storage_used"/>
+        <DescriptionRow v-if="transaction && transaction.receipt" description="Network bandwidth used"
+                        :data="transaction.receipt.network_bandwidth_used"/>
+        <DescriptionRow v-if="transaction && transaction.receipt" description="Compute bandwidth used"
+                        :data="transaction.receipt.compute_bandwidth_used"/>
         <DescriptionRow v-if="transaction" description="Nonce" :data="transaction.transaction.header.nonce"/>
         <DescriptionRow v-if="transaction" description="Operation merkle root"
                         :data="transaction.transaction.header.operation_merkle_root"/>
-        <DescriptionRow v-if="transaction" description="Payer"
-                        :data="preparePayers([transaction.transaction.header.payer])"/>
+
         <DescriptionRow v-if="transaction" description="Containing blocks"
                         :data="prepareBlocks(transaction.containing_blocks)"/>
         <RawData v-if="transaction" :data="transaction"/>
@@ -25,6 +37,7 @@
     </va-card>
   </va-inner-loading>
   <OperationsTable v-if="operations" :operations="operations" :loading="loading"/>
+  <EventsTable v-if="events && events.length" :loading="loading" :events="events"/>
 </template>
 
 <script lang="ts">
@@ -60,14 +73,20 @@ export default {
         if (!transactions) {
           return;
         }
-        transaction.value = transactions[0]
-        operations.value = transactions[0].transaction.operations
+        transaction.value = transactions[0];
+        operations.value = transactions[0].transaction.operations;
+        transaction.value.receipt = await getReceipt(transactions[0].containing_blocks[0], transactions[0].transaction.id);
+        ;
       } catch (e) {
         console.error(e);
       } finally {
         loading.value = false;
       }
+    }
 
+    const getReceipt = async (blockId: string, txId: string) => {
+      const {block_items} = await client.blockStore.getBlocksById([blockId]);
+      return block_items[0].receipt.transaction_receipts.find((event: any) => event.id === txId);
     }
 
     getTransaction(props.txId).then(() => {
@@ -79,6 +98,7 @@ export default {
     return {
       transaction,
       operations,
+      events: computed(() => transaction.value?.receipt?.events),
       loading,
       prepareBlocks: (blocks: string[]) => blocks.map((b) => ({line: b, link: `/block/${b}`})),
       preparePayers: (payers: string[]) => payers.map((p) => ({line: p, link: `/address/${p}`})),
