@@ -16,20 +16,21 @@
         <DescriptionRow v-if="transaction" description="Payer"
                         :data="preparePayers([transaction.transaction.header.payer])"/>
         <DescriptionRow v-if="transaction && transaction.receipt" description="Max payer RC"
-                        :data="transaction.receipt.max_payer_rc"/>
+                        :data="transaction.receipt.max_payer_rc ?? 0"/>
         <DescriptionRow v-if="transaction" description="RC limit" :data="transaction.transaction.header.rc_limit"/>
         <DescriptionRow v-if="transaction && transaction.receipt" description="RC used"
-                        :data="transaction.receipt.rc_used"/>
+                        :data="transaction.receipt.rc_used ?? 0"/>
         <DescriptionRow v-if="transaction && transaction.receipt" description="Disk storage used"
-                        :data="transaction.receipt.disk_storage_used"/>
+                        :data="transaction.receipt.disk_storage_used ?? 0"/>
         <DescriptionRow v-if="transaction && transaction.receipt" description="Network bandwidth used"
-                        :data="transaction.receipt.network_bandwidth_used"/>
+                        :data="transaction.receipt.network_bandwidth_used ?? 0"/>
         <DescriptionRow v-if="transaction && transaction.receipt" description="Compute bandwidth used"
-                        :data="transaction.receipt.compute_bandwidth_used"/>
+                        :data="transaction.receipt.compute_bandwidth_used ?? 0"/>
         <DescriptionRow v-if="transaction" description="Nonce" :data="transaction.transaction.header.nonce"/>
         <DescriptionRow v-if="transaction" description="Operation merkle root"
                         :data="transaction.transaction.header.operation_merkle_root"/>
-
+        <DescriptionRow v-if="transaction && transaction.transaction" description="Signatures"
+                        :data="transaction.transaction.signatures.join(', ')"/>
         <DescriptionRow v-if="transaction" description="Containing blocks"
                         :data="prepareBlocks(transaction.containing_blocks)"/>
         <RawData v-if="transaction" :data="transaction"/>

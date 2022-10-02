@@ -24,7 +24,7 @@
     </va-card>
   </va-inner-loading>
   <TransactionsTable v-if="transactions" :loading="loading" :transactions="transactions"/>
-  <EventsTable v-if="events" :loading="loading" :events="events"/>
+  <EventsTable v-if="events && events.length" :loading="loading" :events="events"/>
 
 </template>
 
@@ -81,7 +81,7 @@ export default {
 
     const events = computed(() => {
       const events = [];
-      if (block_topology.value) {
+      if (block_topology.value?.receipt?.events) {
         events.push(...block_topology.value?.receipt?.events!);
       }
       if (block_topology.value?.receipt?.transaction_receipts) {

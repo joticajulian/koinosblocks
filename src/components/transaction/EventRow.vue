@@ -61,12 +61,13 @@ export default {
       try {
         const {root, abi} = await fetchContractMeta(contractId.value);
         if (!root || !abi) {
+          showError('Error occurred while reading contract ABI or decoding the data')
           return;
         }
         humanReadableData.value = decodeData(root, data.value);
       } catch (e) {
         console.error(e);
-        showError('Error occurred while reading contract proto or decoding the data')
+        showError('Error occurred while reading contract ABI or decoding the data')
       }
     }
 

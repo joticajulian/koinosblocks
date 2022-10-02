@@ -26,7 +26,6 @@ export function useContract() {
                 protos
             }
         } catch (e) {
-            console.error(e);
             return {
                 abi: null,
                 root: null,
