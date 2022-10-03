@@ -126,10 +126,10 @@ export default {
     }
 
     const fields = computed<Argument[]>((): Argument[] => {
-      if (!props.root) {
+      if (!props.root || props.details.argument == "") {
         return [];
       }
-      const type = props.root.lookup(props.details.argument)
+      const type = getType(props.details.argument)
       if (!type || !type.fields) {
         return []
       }
@@ -139,7 +139,6 @@ export default {
           details: type.fields[name]
         }
       });
-      return [];
     })
 
     const convertEntryPoints = (methods: any) => {

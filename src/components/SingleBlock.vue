@@ -86,6 +86,9 @@ export default {
       }
       if (block_topology.value?.receipt?.transaction_receipts) {
         block_topology.value.receipt?.transaction_receipts.reduce((acc, cur) => {
+          if (!cur.events) {
+            return acc;
+          }
           acc.push(...cur.events);
           return acc;
         }, events);
