@@ -5,13 +5,14 @@
       <va-card-content>
         <ul v-if="balances.length">
           <li v-for="balance in balances">
-            <span>{{ balance.amount }} {{balance.symbol}}</span>
+            <span>{{ balance.amount }} {{ balance.symbol }}</span>
           </li>
         </ul>
       </va-card-content>
     </va-card>
   </va-inner-loading>
-  <Contract v-if="isContract" :address="address" :abi="meta.abi" :root="meta.root" :protos="meta.protos" :loading="loading"/>
+  <Contract v-if="isContract" :address="address" :abi="meta.abi" :root="meta.root" :protos="meta.protos"
+            :loading="loading"/>
 </template>
 
 <script lang="ts">
@@ -21,6 +22,12 @@ import EventsTable from "./transaction/EventsTable.vue";
 import Contract from "./contract/Contract.vue";
 import {useToken} from "../composable/useToken";
 import {ContractMeta, useContract} from "../composable/useContract";
+import {useClient} from "../composable/useClient";
+
+interface TokenBalance {
+  amount: number,
+  symbol: string
+}
 
 export default {
   components: {Contract, EventsTable, TransactionsTable},
@@ -37,12 +44,13 @@ export default {
 
     const meta = ref<ContractMeta>({root: null, abi: null});
     const loading = ref(true);
-    const balances = ref<{amount: number, symbol: string}[]>([]);
+    const balances = ref<TokenBalance[]>([]);
 
+    const {client} = useClient();
     const {createToken} = useToken();
     const {fetchContractMeta} = useContract();
 
-    const getTokenValue = async (contractId: string, address: string) => {
+    const getTokenValue = async (contractId: string, address: string): Promise<void> => {
       try {
         const koin = await createToken(contractId)
         const precision = await koin.getPrecision()
@@ -55,11 +63,25 @@ export default {
       }
     };
 
+
+    const getMana = async (address: string): Promise<void> => {
+      try {
+        const {rc} = await client.chain.getAccountRC(address);
+        balances.value.push({
+          amount: Number(rc) / 10 ** 8,
+          symbol: 'MANA'
+        });
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
     const refreshData = async (address: string) => {
       try {
         loading.value = true;
         balances.value = [];
         meta.value = await fetchContractMeta(address);
+        await getMana(address);
         await Promise.all(tokens.map(async (token) => getTokenValue(token, address)));
       } finally {
         loading.value = false;
@@ -68,7 +90,7 @@ export default {
 
     watch(() => props.address, refreshData);
 
-    setTimeout(() => refreshData(props.address),1);
+    setTimeout(() => refreshData(props.address), 1);
 
     return {
       isContract: computed(() => meta.value?.abi && meta.value?.root),
