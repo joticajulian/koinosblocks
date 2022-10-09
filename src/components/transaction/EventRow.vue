@@ -46,6 +46,7 @@ export default {
 
     const contractId = computed(() => props.event.source);
     const potentialTypes = computed(() => ([
+      props.event.name,
       `${props.event.name.split('.')[1]}_event`,
       `${props.event.name.replace('.', '_')}_event`,
     ]));
