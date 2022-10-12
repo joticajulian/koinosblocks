@@ -18,7 +18,11 @@
             <a href="https://gitlab.com/engrave/koinos/koinosblocks" target="_blank" rel="noopener noreferrer">
               <img :src="gitlab" />
             </a>
-
+          </va-navbar-item>
+          <va-navbar-item>
+            <a href="https://twitter.com/koinosblocks" target="_blank" rel="noopener noreferrer">
+              <img :src="twitter" />
+            </a>
           </va-navbar-item>
         </template>
   </va-navbar>
@@ -26,11 +30,13 @@
 
 <script>
 import gitlab from '/icons/gitlab.svg'
+import twitter from '/icons/twitter.svg'
 export default {
   name: 'Footer',
   data() {
     return {
-      gitlab
+      gitlab,
+      twitter
     }
   }
 };
@@ -59,6 +65,11 @@ a:hover {
   -webkit-box-align: center;
   align-items: center;
   gap: 8px;
+}
+
+img {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 </style>
