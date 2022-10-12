@@ -16,12 +16,12 @@
         <template #right>
           <va-navbar-item>
             <a href="https://gitlab.com/engrave/koinos/koinosblocks" target="_blank" rel="noopener noreferrer">
-              <img :src="gitlab" />
+              <img class="icon" :src="gitlab" />
             </a>
           </va-navbar-item>
           <va-navbar-item>
             <a href="https://twitter.com/koinosblocks" target="_blank" rel="noopener noreferrer">
-              <img :src="twitter" />
+              <img class="icon" :src="twitter" />
             </a>
           </va-navbar-item>
         </template>
@@ -67,7 +67,7 @@ a:hover {
   gap: 8px;
 }
 
-img {
+.icon {
   width: 1.5rem;
   height: 1.5rem;
 }
