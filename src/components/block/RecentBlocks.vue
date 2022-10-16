@@ -72,9 +72,9 @@ export default {
 
     const countEvents = (block: Block) => {
       let count = 0;
-      count += (block.receipt?.events.length ?? 0);
+      count += (block.receipt?.events?.length ?? 0);
       if (block.receipt?.transaction_receipts) {
-        count += block.receipt?.transaction_receipts.reduce((acc, tx) => acc + tx.events?.length ?? 0, 0) ?? 0
+        count += block.receipt?.transaction_receipts.reduce((acc, tx) => acc + (tx.events?.length ?? 0), 0)
       }
       return count;
     }

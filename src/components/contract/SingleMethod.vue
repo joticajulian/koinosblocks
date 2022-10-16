@@ -55,7 +55,6 @@
 
 <script lang="ts">
 import {computed, reactive, Ref, ref, unref} from "vue";
-import * as protobuf from "protobufjs";
 import {VaButton, VaCollapse, VaInput} from "vuestic-ui";
 import {Argument, useClient} from "../../composable/useClient";
 import ContractInputField from "./contractForm/ContractInputField.vue";
