@@ -8,6 +8,8 @@
           <DescriptionRow description="Block height" :data="prepareBlocks([block_topology.block_height])"/>
           <DescriptionRow description="Created at" :data="toDateTime(block_topology.block.header.timestamp)"/>
           <DescriptionRow description="Previous block" :data="prepareBlocks([block_topology.block.header.previous])"/>
+          <DescriptionRow description="Number of transactions" :data="transactions?.length ?? '0' "/>
+          <DescriptionRow description="Number of events" :data="events?.length ?? '0' "/>
           <DescriptionRow description="Compute bandwidth used"
                           :data="block_topology.receipt.compute_bandwidth_used ?? '0'"/>
           <DescriptionRow description="Disk storage used" :data="block_topology.receipt.disk_storage_used ?? '0'"/>
@@ -33,7 +35,7 @@ import {computed, ref, watch} from 'vue'
 import TransactionsTable from "./transaction/TransactionsTable.vue";
 import EventsTable from "./transaction/EventsTable.vue";
 import {useClient} from "../composable/useClient";
-import DescriptionRow from "./common/DescriptionRow.vue";
+import DescriptionRow, {LinkedRow} from "./common/DescriptionRow.vue";
 import RawData from "./common/RawData.vue";
 import moment from "moment/moment";
 import {Block, Transaction} from "koinos-rpc";
@@ -104,16 +106,16 @@ export default {
       loading,
       toBlockLink: (blockId: string) => `/block/${blockId}`,
       toAddressLink: (address: string) => `/address/${address}`,
-      prepareProducers: (producers: string[]) => producers.map((p) => ({
-        line: p,
+      prepareProducers: (producers: string[]): LinkedRow[] => producers.map((p) => ({
+        text: p,
         link: `/address/${p}`
       })),
-      prepareBlocks: (blocks: any[]) => blocks.map((block: any) => ({
-        line: block,
+      prepareBlocks: (blocks: any[]): LinkedRow[] => blocks.map((block: any) => ({
+        text: block,
         link: `/block/${block}`
       })),
-      prepareProposals: (proposals: string[]) => proposals.map((p) => ({
-        line: p,
+      prepareProposals: (proposals: string[]): LinkedRow[] => proposals.map((p) => ({
+        text: p,
         link: `/proposal/${p}`
       })),
       toRelativeTime: (timestamp: number) => {

@@ -2,48 +2,53 @@
   <dl>
     <dt>{{ description }}</dt>
     <dd>
-    <template v-for="l in lines">
-      <dd class="line" v-if="!l.link">{{ l.line }}</dd>
-      <dd class="line" v-if="l.link">
-        <router-link :to="l.link">{{l.line}}</router-link>
-      </dd>
-    </template>
+      <Link v-for="line in lines" :link="line.link" :text="line.text" />
     </dd>
   </dl>
 </template>
+
 <script lang="ts">
+
+import {computed} from "vue";
+import Link from "./Link.vue";
+
+export interface LinkedRow {
+  text: string,
+  link?: string
+}
+
 export default {
   name: 'DescriptionRow',
+  components: {Link},
   props: {
     description: {
       type: String,
       required: true
     },
     data: {
-      type: [String, Array<{line: string, link?: string}>],
+      type: [String, Number, Array<LinkedRow>],
       required: true
     }
   },
-  computed: {
-    lines: function (): {line: string, link?: string}[] {
-      if (typeof this.data === 'string') {
-        return [{line: this.data}];
+
+  setup(props: any) {
+
+    const lines = computed((): LinkedRow[] => {
+      if (Array.isArray(props.data)) {
+        return props.data;
+      } else {
+        return [{text: props.data.toString()}];
       }
-      return this.data;
+    });
+
+    return {
+      lines
     }
   }
 }
 </script>
 
 <style scoped>
-
-a {
-  color: #34495e;
-}
-
-a:hover {
-  text-decoration: underline;
-}
 
 dt {
   font-weight: bold;

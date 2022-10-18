@@ -47,7 +47,7 @@ import TransactionsTable from "./transaction/TransactionsTable.vue";
 import EventsTable from "./transaction/EventsTable.vue";
 import OperationsTable from "./transaction/OperationsTable.vue";
 import {useClient} from "../composable/useClient";
-import DescriptionRow from "./common/DescriptionRow.vue";
+import DescriptionRow, {LinkedRow} from "./common/DescriptionRow.vue";
 import RawData from "./common/RawData.vue";
 
 export default {
@@ -101,9 +101,9 @@ export default {
       operations,
       events: computed(() => transaction.value?.receipt?.events),
       loading,
-      prepareBlocks: (blocks: string[]) => blocks.map((b) => ({line: b, link: `/block/${b}`})),
-      preparePayers: (payers: string[]) => payers.map((p) => ({line: p, link: `/address/${p}`})),
-      prepareTransactions: (transactions: string[]) => transactions.map((t) => ({line: t, link: `/tx/${t}`})),
+      prepareBlocks: (blocks: string[]): LinkedRow[] => blocks.map((b) => ({text: b, link: `/block/${b}`})),
+      preparePayers: (payers: string[]): LinkedRow[] => payers.map((p) => ({text: p, link: `/address/${p}`})),
+      prepareTransactions: (transactions: string[]): LinkedRow[] => transactions.map((t) => ({text: t, link: `/tx/${t}`})),
       transactionExists: computed(() => !loading.value && transaction.value)
     }
   }

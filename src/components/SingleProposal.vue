@@ -24,7 +24,7 @@ import {ref, watch} from "vue";
 import {useClient} from "../composable/useClient";
 import * as koinosPbToProto from "@roamin/koinos-pb-to-proto";
 import * as protobuf from "protobufjs";
-import {Message, Root} from "protobufjs";
+import {Root} from "protobufjs";
 import {utils} from "koilib";
 import base64url from "base64url";
 import RawData from "./common/RawData.vue";

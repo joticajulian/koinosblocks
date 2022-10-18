@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import {onBeforeUnmount, Ref, ref} from 'vue'
+import {ref} from 'vue'
 import {useClient} from "../../composable/useClient";
 import DescriptionRow from "../common/DescriptionRow.vue";
 import moment from "moment";
