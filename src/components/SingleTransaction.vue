@@ -10,6 +10,9 @@
         </va-alert>
       </va-card-content>
       <va-card-content v-if="transactionExists">
+        <va-alert v-if="wasReverted" color="danger" center class="mb-4 mt-4">
+          This transaction was reverted
+        </va-alert>
         <DescriptionRow v-if="transaction" description="Transaction ID"
                         :data="prepareTransactions([transaction.transaction.id])"/>
         <DescriptionRow v-if="transaction" description="Chain ID" :data="transaction.transaction.header.chain_id"/>
@@ -104,7 +107,8 @@ export default {
       prepareBlocks: (blocks: string[]): LinkedRow[] => blocks.map((b) => ({text: b, link: `/block/${b}`})),
       preparePayers: (payers: string[]): LinkedRow[] => payers.map((p) => ({text: p, link: `/address/${p}`})),
       prepareTransactions: (transactions: string[]): LinkedRow[] => transactions.map((t) => ({text: t, link: `/tx/${t}`})),
-      transactionExists: computed(() => !loading.value && transaction.value)
+      transactionExists: computed(() => !loading.value && transaction.value),
+      wasReverted: computed(() => transaction.value?.receipt?.reverted === true)
     }
   }
 }
