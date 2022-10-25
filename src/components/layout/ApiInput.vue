@@ -1,8 +1,12 @@
 <template>
   <va-input
       label="API node address"
-      v-model="api"/>
-  <va-button size="medium" @click="updateClientApi(api)">Set</va-button>
+      v-model="url"
+      @keyup.enter="updateClientApi(url)"/>
+  <va-button
+      size="medium"
+      @click="updateClientApi(url)">Set
+  </va-button>
 </template>
 
 <script>
@@ -16,15 +20,17 @@ export default {
     const {updateApiAddress} = useClient();
     const {showSuccess} = useNotification();
 
-    const api = ref(localStorage.getItem('api') || 'https://api.koinosblocks.com');
+    const url = ref(localStorage.getItem('api') || 'https://api.koinosblocks.com');
 
     return {
-      api,
+      url,
       updateClientApi: () => {
-        localStorage.setItem('api', api.value);
-        updateApiAddress(api.value)
-
-        showSuccess('API node updated');
+        const currentApi = localStorage.getItem('api');
+        if (currentApi !== url.value) {
+          localStorage.setItem('api', url.value);
+          updateApiAddress(url.value)
+          showSuccess('API node updated');
+        }
       }
     }
   }
