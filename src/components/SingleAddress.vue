@@ -40,7 +40,7 @@ export default {
 
   async setup(props: any) {
 
-    const tokens = ['19JntSm8pSNETT9aHTwAUHC5RMoaSmgZPJ', '1JZqj7dDrK5LzvdJgufYBJNUFo88xBoWC8']
+    const tokens = ['15DJN4a8SgrbGhhGksSBASiSYjGnMU8dGL', '1AdzuXSpC6K9qtXdCBgD5NUpDNwHjMgrc9']
 
     const meta = ref<ContractMeta>({root: null, abi: null});
     const loading = ref(true);
@@ -52,10 +52,10 @@ export default {
 
     const getTokenValue = async (contractId: string, address: string): Promise<void> => {
       try {
-        const koin = await createToken(contractId)
-        const precision = await koin.getPrecision()
-        const balance = await koin.getBalance(address, true)
-        const symbol = await koin.getSymbol()
+        const token = await createToken(contractId)
+        const precision = await token.getPrecision()
+        const balance = await token.getBalance(address, true)
+        const symbol = await token.getSymbol()
         const amount = Number(balance) / Math.pow(10, precision)
         balances.value.push({amount, symbol})
       } catch (e) {
