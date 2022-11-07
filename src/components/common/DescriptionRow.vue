@@ -51,7 +51,8 @@ export default {
 <style scoped>
 
 dt {
-  font-weight: bold;
+  font-weight: 100;
+  color: gray;
   margin-bottom: 0;
   min-width: 20%;
   overflow-wrap: anywhere;
@@ -65,6 +66,7 @@ dd {
 dl {
   display: flex;
   flex-direction: row;
-  margin: 0.75em 0
+  margin: 0.75em 0;
+  gap: 1em;
 }
 </style>

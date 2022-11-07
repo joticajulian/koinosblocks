@@ -1,6 +1,6 @@
 <template>
   <va-inner-loading :loading="loading">
-    <va-card class="offset--sm" stripe stripe-color="success">
+    <va-card class="offset--sm">
       <va-card-title>Recent blocks</va-card-title>
       <va-card-content>
         <table class="va-table va-table--hoverable  va-table--striped" style="width: 100%;">
@@ -63,7 +63,7 @@ export default {
     const updateBlocks = async () => {
       const {client} = useClient();
       const {topology} = await client.blockStore.getHighestBlock();
-      const {block_items} = await client.blockStore.getBlocksByHeight(topology.id, topology.height - 19, 20);
+      const {block_items} = await client.blockStore.getBlocksByHeight(topology.id, topology.height - 9, 20);
       blocks.value = block_items.reverse();
       loading.value = false;
     }

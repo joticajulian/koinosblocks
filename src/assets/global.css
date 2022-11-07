@@ -1,7 +1,33 @@
 a {
-    color: #34495e;
+  color: #34495e;
 }
 
 a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
+.square {
+  border-radius: 0 !important;
+}
+.border-primary {
+    border: 1px solid #3498db;
+}
+.border-secondary {
+    border: 1px solid #34495e;
+}
+.margin-top-3 {
+  margin-top: 3rem;
+}
+.margin-top-2 {
+  margin-top: 2rem;
+}
+.margin-top-1 {
+  margin-top: 1rem;
+}
+.width-30 {
+    width: 30%;
+}
+.width-70 {
+    width: 70%;
+}
+
+
