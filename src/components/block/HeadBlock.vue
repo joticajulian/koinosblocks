@@ -78,7 +78,7 @@ a:hover {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width: 60%;
+  width: 25%;
   margin: 0 auto;  
 }
 .data-row {
