@@ -1,34 +1,24 @@
 <template>
   <va-inner-loading :loading="loading">
-    <va-card square outlined>
-      <va-card-content v-if="headInfo">
-        <div v-if="headInfo.head_topology" class="split-card">
-          <div class="width-30">
+    <va-card class="square" outlined>
+      <va-card-content v-if="headInfo" class="square">
+        <div v-if="headInfo.head_topology" class="info">
+          <!-- <div class="data-row">
             <DescriptionRow
               description="Time"
               :data="toDateTime(headInfo.head_block_time)"
             />
-            <DescriptionRow
+            </div> -->
+            <div class="data-row">
+              <DescriptionRow
               description="Head block height"
               :data="headInfo.head_topology.height.toString()"
             />
+            </div>
+            <div class="data-row">
             <DescriptionRow
               description="Last irreversible block"
               :data="headInfo.last_irreversible_block"
-            />
-          </div>
-          <div class="width-70">
-            <DescriptionRow
-              description="Head state merkle root"
-              :data="headInfo.head_state_merkle_root"
-            />
-            <DescriptionRow
-              description="Head block ID"
-              :data="headInfo.head_topology.id"
-            />
-            <DescriptionRow
-              description="Previous block"
-              :data="headInfo.head_topology.previous"
             />
           </div>
         </div>
@@ -79,8 +69,19 @@ a {
 a:hover {
   text-decoration: underline;
 }
-.split-card {
+.square {
+  border: none;
+  padding: 0;
+}
+
+.info {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
+  width: 60%;
+  margin: 0 auto;  
+}
+.data-row {
+  width: 100%
 }
 </style>

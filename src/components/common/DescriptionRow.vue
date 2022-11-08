@@ -8,48 +8,45 @@
 </template>
 
 <script lang="ts">
-
-import {computed} from "vue";
-import Link from "./Link.vue";
+import { computed } from "vue"
+import Link from "./Link.vue"
 
 export interface LinkedRow {
-  text: string,
+  text: string
   link?: string
 }
 
 export default {
-  name: 'DescriptionRow',
-  components: {Link},
+  name: "DescriptionRow",
+  components: { Link },
   props: {
     description: {
       type: String,
-      required: true
+      required: true,
     },
     data: {
       type: [String, Number, Array<LinkedRow>],
-      required: true
-    }
+      required: true,
+    },
   },
 
   setup(props: any) {
-
     const lines = computed((): LinkedRow[] => {
       if (Array.isArray(props.data)) {
-        return props.data;
+        return props.data
       } else {
-        return [{text: props.data.toString()}];
+        return [{ text: props.data.toString() }]
       }
-    });
+    })
 
     return {
-      lines
+      lines,
     }
-  }
+  },
 }
 </script>
 
 <style scoped>
-
 dt {
   font-weight: 100;
   color: gray;
@@ -61,6 +58,7 @@ dt {
 dd {
   margin-top: 0;
   overflow-wrap: anywhere;
+  font-weight: bolder;
 }
 
 dl {
@@ -68,5 +66,8 @@ dl {
   flex-direction: row;
   margin: 0.75em 0;
   gap: 1em;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8em;
 }
 </style>

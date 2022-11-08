@@ -1,23 +1,25 @@
 <template>
-<!--  <div class="row">-->
+  <div class="container">
+    <!--  <div class="row">-->
 <!--    <div class="offset&#45;&#45;sm row ma-3" style="width: 100%;">-->
 <!--      <MarketcapInfo />-->
 <!--    </div>-->
 <!--  </div>-->
-  <div class="row">
+  <div class="">
     <div class="offset--sm row ma-3" style="width: 100%;">
       <SearchBar />
     </div>
   </div>
-  <div class="row">
-    <div class="offset--sm row ma-3" style="width: 100%;">
+  <div class="">
+    <div class="offset--sm row" style="width: 100%;">
       <HeadBlock />
     </div>
   </div>
-  <div class="row">
+  <div class="info-table">
     <div class="offset--sm row ma-3" style="width: 100%;">
       <RecentBlocks />
     </div>
+  </div>
   </div>
 </template>
 
@@ -32,3 +34,14 @@ export default {
 }
 
 </script>
+<style scoped>
+.container {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+}
+.info-table {
+  opacity: 60%;
+  margin-top:7em;
+}
+</style>

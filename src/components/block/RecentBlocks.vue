@@ -3,7 +3,7 @@
     <va-card class="offset--sm">
       <va-card-title>Recent blocks</va-card-title>
       <va-card-content>
-        <table class="va-table va-table--hoverable  va-table--striped" style="width: 100%;">
+        <table class="va-table va-table--hoverable  va-table--striped no-border" style="width: 100%;">
           <thead>
           <tr>
             <th>Height</th>
@@ -104,5 +104,9 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+.no-border, .va-card {
+  border: none !important;
+  box-shadow: none !important;
 }
 </style>
