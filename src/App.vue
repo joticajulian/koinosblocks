@@ -25,5 +25,6 @@ export default {
   min-height: 100vh;
   max-width: 1400px;
   margin: 0 auto;
+  padding-top: 1em;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container margin-top-2">
     <!--  <div class="row">-->
 <!--    <div class="offset&#45;&#45;sm row ma-3" style="width: 100%;">-->
 <!--      <MarketcapInfo />-->
@@ -43,5 +43,8 @@ export default {
 .info-table {
   opacity: 60%;
   margin-top:7em;
+}
+margin-top-2 {
+  margin-top: 2em;
 }
 </style>
