@@ -3,11 +3,12 @@
     <va-card class="offset--sm row ma-3" stripe stripe-color="success">
       <va-card-title>Wallet {{ address }} details</va-card-title>
       <va-card-content>
-        <ul v-if="balances.length">
+        <ul v-if="!isEmpty">
           <li v-for="balance in balances">
             <span>{{ balance.amount }} {{ balance.symbol }}</span>
           </li>
         </ul>
+        <p v-if="isEmpty && !loading">This wallet is empty</p>
       </va-card-content>
     </va-card>
   </va-inner-loading>
@@ -42,7 +43,7 @@ export default {
 
     const tokens = ['15DJN4a8SgrbGhhGksSBASiSYjGnMU8dGL', '1AdzuXSpC6K9qtXdCBgD5NUpDNwHjMgrc9']
 
-    const meta = ref<ContractMeta>({root: null, abi: null});
+    const meta = ref<ContractMeta>({root: null, abi: null, protos: null});
     const loading = ref(true);
     const balances = ref<TokenBalance[]>([]);
 
@@ -67,10 +68,12 @@ export default {
     const getMana = async (address: string): Promise<void> => {
       try {
         const {rc} = await client.chain.getAccountRC(address);
-        balances.value.push({
-          amount: Number(rc) / 10 ** 8,
-          symbol: 'MANA'
-        });
+        if (rc) {
+          balances.value.push({
+            amount: Number(rc) / 10 ** 8,
+            symbol: 'MANA'
+          });
+        }
       } catch (e) {
         console.error(e)
       }
@@ -96,7 +99,8 @@ export default {
       isContract: computed(() => meta.value?.abi && meta.value?.root),
       meta,
       loading,
-      balances: computed(() => balances.value.sort((a, b) => a.symbol.localeCompare(b.symbol)))
+      balances: computed(() => balances.value.sort((a, b) => a.symbol.localeCompare(b.symbol))),
+      isEmpty: computed(() => !balances.value.length)
     }
   }
 }
