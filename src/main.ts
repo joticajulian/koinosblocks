@@ -8,6 +8,7 @@ import Transaction from './pages/Transaction.vue';
 import Address from './pages/Address.vue';
 import Proposal from './pages/Proposal.vue';
 import Proposals from './pages/Proposals.vue';
+import Contracts from './pages/Contracts.vue';
 import {createRouter, createWebHistory} from "vue-router";
 import hljsVuePlugin from "@highlightjs/vue-plugin";
 import VueGtag from "vue-gtag";
@@ -19,6 +20,7 @@ const routes = [
     {path: '/address/:address', component: Address, meta: {title: `Koinosblocks.com - address details`}},
     {path: '/proposal/:id', component: Proposal, meta: {title: 'Koinosblocks.com - proposal details'}},
     {path: '/proposals', component: Proposals, meta: {title: 'Koinosblocks.com - proposals'}},
+    {path: '/contracts', component: Contracts, meta: {title: 'Koinosblocks.com - known contracts'}},
 ]
 
 const router = createRouter({history: createWebHistory(), routes});

@@ -77,9 +77,28 @@ export function useContract() {
         return normalized;
     }
 
+    const encodeArgs = (root: Root, type: string, input: any): string => {
+        if (type == "") {
+            return "";
+        }
+        const inputType = root.lookupType(type)
+        const message = inputType.create(input)
+        return utils.encodeBase64url(Buffer.from(inputType.encode(message!).finish()))
+    }
+
+    const decodeResult = (root: Root, type: string, result: string): any => {
+        if (type == "") {
+            return result
+        }
+        const buffer = utils.decodeBase64url(result);
+        return root.lookupType(type).decode(buffer).toJSON();
+    }
+
 
     return {
         fetchContractMeta,
-        normalize
+        normalize,
+        encodeArgs,
+        decodeResult
     }
 }

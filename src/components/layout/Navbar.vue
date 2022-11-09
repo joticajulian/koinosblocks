@@ -7,11 +7,11 @@
         </router-link>
       </va-navbar-item>
     </template>
-<!--    <template #center>-->
-<!--      <va-navbar-item>-->
-<!--        <router-link to="/proposals">Proposals</router-link>-->
-<!--      </va-navbar-item>-->
-<!--    </template>-->
+    <template #center>
+      <va-navbar-item>
+        <router-link to="/contracts">Contracts</router-link>
+      </va-navbar-item>
+    </template>
     <template #right>
       <va-navbar-item>
         <ApiInput/>
@@ -33,4 +33,7 @@ export default {
 #logo {
   max-width: 150px;
 }
+a {
+  margin: 0.5rem;
+ }
 </style>
