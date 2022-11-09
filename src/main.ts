@@ -20,7 +20,7 @@ const routes = [
     {path: '/address/:address', component: Address, meta: {title: `Koinosblocks.com - address details`}},
     {path: '/proposal/:id', component: Proposal, meta: {title: 'Koinosblocks.com - proposal details'}},
     {path: '/proposals', component: Proposals, meta: {title: 'Koinosblocks.com - proposals'}},
-    {path: '/contracts', component: Contracts, meta: {title: 'Koinosblocks.com - known contracts'}},
+    {path: '/contracts', component: Contracts, meta: {title: 'Koinosblocks.com - system contracts'}},
 ]
 
 const router = createRouter({history: createWebHistory(), routes});
