@@ -54,7 +54,7 @@ export default {
       description: 'Virtual Hash Power token',
     }, {
       name: 'pob',
-      description: 'Proof of burn consensus algorithm',
+      description: 'Proof of Burn consensus algorithm',
     }, {
       name: 'claim',
       description: 'Koin claiming contract',
