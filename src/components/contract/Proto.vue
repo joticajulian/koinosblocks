@@ -1,7 +1,7 @@
 <template>
   <div class="proto">
-    <span @click="toggle" class="title filename">{{proto.file}}</span>
-    <pre v-if="visible" class="code-snippet scrollable">{{proto.definition}}</pre>
+    <span @click="toggle" class="va-title filename">{{proto.file}}</span>
+    <pre v-if="visible" class="va-code-snippet scrollable">{{proto.definition}}</pre>
   </div>
 </template>
 

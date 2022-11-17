@@ -24,7 +24,6 @@ export default {
     const on = ref(false)
     const toggle = () => {
       on.value = !on.value
-      console.log('toggle');
     }
     return {
       toggle,
@@ -38,8 +37,12 @@ export default {
 .title {
   cursor: pointer;
   color: #3f51b5;
-  font-weight: bold;
+  font-weight: 700;
   margin: 1em 0;
+  font-size: .625rem;
+  letter-spacing: .6px;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
 pre {
   margin-top: 1em;

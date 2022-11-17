@@ -3,7 +3,7 @@
     <va-card class="offset--sm row ma-3" stripe stripe-color="info">
       <va-card-title>Contract {{ address }} details</va-card-title>
       <va-card-content>
-        <div class="text--right">
+        <div class="va-text-right">
           <va-button @click="requestAccounts()">Connect Kondor</va-button>
         </div>
         <AuthorizedAccounts :accounts="accounts"/>

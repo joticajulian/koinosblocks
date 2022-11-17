@@ -34,6 +34,15 @@ router.beforeEach((to, from, next) => {
 const app = createApp(App)
 app.use(router)
 app.use(VueGtag, {config: {id: "G-4T8BF134X6"}}, router)
-app.use(createVuestic())
+app.use(createVuestic({
+    config: {
+        colors: {
+            variables: {
+                backgroundPrimary: '#ffffff',
+            }
+
+        }
+    }
+}))
 app.use(hljsVuePlugin)
 app.mount("#app")

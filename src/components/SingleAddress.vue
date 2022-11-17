@@ -1,7 +1,7 @@
 <template>
   <va-inner-loading :loading="loading">
     <va-card class="offset--sm row ma-3" stripe stripe-color="success">
-      <va-card-title>Wallet {{ address }} details</va-card-title>
+      <va-card-title>Wallet details</va-card-title>
       <va-card-content>
         <ul v-if="!isEmpty">
           <li v-for="balance in balances">
@@ -14,6 +14,8 @@
   </va-inner-loading>
   <Contract v-if="isContract" :address="address" :abi="meta.abi" :root="meta.root" :protos="meta.protos"
             :loading="loading"/>
+  <TransactionHistory :address="address"/>
+
 </template>
 
 <script lang="ts">
@@ -24,6 +26,7 @@ import Contract from "./contract/Contract.vue";
 import {useToken} from "../composable/useToken";
 import {ContractMeta, useContract} from "../composable/useContract";
 import {useClient} from "../composable/useClient";
+import TransactionHistory from "./address/TransactionHistory.vue";
 
 interface TokenBalance {
   amount: number,
@@ -31,7 +34,7 @@ interface TokenBalance {
 }
 
 export default {
-  components: {Contract, EventsTable, TransactionsTable},
+  components: {TransactionHistory, Contract, EventsTable, TransactionsTable},
   props: {
     address: {
       type: String,

@@ -1,7 +1,7 @@
 <template>
   <va-inner-loading :loading="loading">
     <va-card class="offset--sm row ma-3">
-      <va-card-title>Transactions</va-card-title>
+      <va-card-title>{{title}}</va-card-title>
       <va-card-content>
         <table class="va-table va-table--hoverable va-table--striped" style="width: 100%;">
           <thead>
@@ -45,6 +45,11 @@ export default {
     transactions: {
       type: Array,
       required: true
+    },
+    title: {
+      type: String,
+      required: false,
+      default: 'Transactions'
     },
     loading: {
       type: Boolean,

@@ -1,5 +1,5 @@
 <template>
-  <div class="text--right mt-3" v-if="accounts.length">
+  <div class="va-text-right mt-3" v-if="accounts.length">
     <p><strong>Authorized accounts:</strong></p>
     <ul>
       <li v-for="account in accounts">
