@@ -27,6 +27,7 @@ import {useToken} from "../composable/useToken";
 import {ContractMeta, useContract} from "../composable/useContract";
 import {useClient} from "../composable/useClient";
 import TransactionHistory from "./address/TransactionHistory.vue";
+import {useNameService} from "../composable/useNameService";
 
 interface TokenBalance {
   amount: number,
@@ -44,7 +45,7 @@ export default {
 
   async setup(props: any) {
 
-    const tokens = ['15DJN4a8SgrbGhhGksSBASiSYjGnMU8dGL', '1AdzuXSpC6K9qtXdCBgD5NUpDNwHjMgrc9']
+    const tokens = ref<string[]>([]);
 
     const meta = ref<ContractMeta>({root: null, abi: null, protos: null});
     const loading = ref(true);
@@ -53,10 +54,16 @@ export default {
     const {client} = useClient();
     const {createToken} = useToken();
     const {fetchContractMeta} = useContract();
+    const {getSystemContractAddress} = useNameService();
 
-    const getTokenValue = async (contractId: string, address: string): Promise<void> => {
+    const getTokensAddresses = async () => {
+      const names = ['koin', 'vhp'];
+      return Promise.all(names.map(getSystemContractAddress));
+    }
+
+    const getTokenValue = async (tokenContractId: string, address: string): Promise<void> => {
       try {
-        const token = await createToken(contractId)
+        const token = await createToken(tokenContractId)
         const precision = await token.getPrecision()
         const balance = await token.getBalance(address, true)
         const symbol = await token.getSymbol()
@@ -87,8 +94,9 @@ export default {
         loading.value = true;
         balances.value = [];
         meta.value = await fetchContractMeta(address);
+        tokens.value = await getTokensAddresses();
         await getMana(address);
-        await Promise.all(tokens.map(async (token) => getTokenValue(token, address)));
+        await Promise.all(tokens.value.map(async (token) => getTokenValue(token, address)));
       } finally {
         loading.value = false;
       }

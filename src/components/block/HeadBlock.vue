@@ -26,14 +26,13 @@ import {useInterval} from "../../composable/useInterval";
 export default {
   components: {DescriptionRow},
   setup() {
-
-    const {client} = useClient();
     const {set} = useInterval();
 
     let headInfo = ref<any>(null);
     const loading = ref(true);
 
     const updateBlocks = async () => {
+      const {client} = useClient();
       headInfo.value = await client.chain.getHeadInfo();
       loading.value = false;
     }

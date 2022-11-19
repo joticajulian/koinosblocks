@@ -32,6 +32,8 @@ import {useContract} from "../composable/useContract";
 import {useClient} from "../composable/useClient";
 import {Root} from "protobufjs";
 import {utils} from "koilib";
+import {useChain} from "../composable/useChain";
+import {useNameService} from "../composable/useNameService";
 
 interface Contract {
   description: string;
@@ -43,9 +45,8 @@ export default {
 
   async setup() {
 
-    const {client} = useClient();
-
     const loading = ref(true);
+
     const contracts = ref<Contract[]>([{
       name: 'koin',
       description: 'Koin token',
@@ -69,43 +70,31 @@ export default {
       description: 'Blockchain resources contract (MANA)',
     }]);
 
-    const nameService = '19WxDJ9Kcvx4VqQFkpwVmwVEy1hMuwXtQE'
+    const {getSystemContractAddress} = useNameService();
 
-    const {fetchContractMeta, encodeArgs, decodeResult} = useContract();
+    const getContractAddress = async (contract: Contract) => {
+      try {
+        return {
+          ...contract,
+          address: await getSystemContractAddress(contract.name)
+        }
+      } catch (e) {
+        console.error(e);
+        return contract;
+      }
+    }
 
     const getData = async () => {
       loading.value = true;
       try {
-        const {root} = await fetchContractMeta(nameService);
-        if (root) {
-          const contractsWithAddresses = await Promise.all(contracts.value.map(getContractAddress(root)));
-          contracts.value = contractsWithAddresses.filter((contract) => contract.address);
-        }
+        const contractsWithAddresses = await Promise.all(contracts.value.map(getContractAddress));
+        contracts.value = contractsWithAddresses.filter((contract) => contract.address);
       } catch (e) {
         console.error(e);
       } finally {
         loading.value = false;
       }
     };
-
-    const getContractAddress = (root: Root) => {
-      return async (contract: Contract): Promise<Contract> => {
-        try {
-          const args = encodeArgs(root, 'koinos.contracts.name_service.get_address_arguments', {
-            name: contract.name
-          });
-          const {result} = await client.chain.readContract(nameService, 0xa61ae5e8, args);
-          const {value: {address}} = decodeResult(root, 'koinos.contracts.name_service.get_address_result', result);
-          return {
-            ...contract,
-            address: utils.encodeBase58(utils.decodeBase64(address))
-          };
-        } catch (e) {
-          console.error(e);
-          return contract;
-        }
-      }
-    }
 
     getData().then();
 
@@ -116,5 +105,4 @@ export default {
     }
   }
 }
-
 </script>
