@@ -13,7 +13,7 @@ export function useNameService() {
     const getNameServiceAddress = async (): Promise<string> => {
         const {client} = useClient();
         const {chain_id} = await client.chain.getChainId();
-        return chain_id === testnetChainId ? '1AM1c73tDNTc24KYqYvSHmoZ2C7oe4DZhh' : '';
+        return chain_id === testnetChainId ? '1AM1c73tDNTc24KYqYvSHmoZ2C7oe4DZhh' : '19WxDJ9Kcvx4VqQFkpwVmwVEy1hMuwXtQE';
     }
 
     const getSystemContractAddress = async (name: string): Promise<string> => {
