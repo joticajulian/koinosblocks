@@ -25,10 +25,10 @@
               v-model="selectedSigner"
           />
           <va-button
-              style="display: block;"
               v-if="!isReadOnly && isKondorConnected"
               class="mb-4"
               color="primary"
+              :disabled="!selectedSigner"
               @click="writeContract(details.argument, details.return)">Sign and send
           </va-button>
           <va-button
@@ -47,6 +47,7 @@
             <RawData :data="txReceipt" label="transaction receipt"/>
           </div>
           <pre v-if="error">Error: {{ JSON.stringify(error, null, 2) }}</pre>
+          <pre v-if="dataError">Data: {{ dataError }}</pre>
         </va-form>
       </div>
     </va-collapse>
@@ -100,12 +101,13 @@ export default {
     const txReceipt = ref(null);
 
     const error = ref(null);
+    const dataError = ref(null);
     const selectedSigner = ref<string | null>(null);
 
     const {client} = useClient();
     const {getSigner} = useKondor();
 
-    const getType = (type_description: string): Type => props.root.lookupType(type_description)
+    const getType = (type_description: string): Type => props.root.lookup(type_description)
 
     const encodeArguments = (type: string, input: any): string => {
       if (type == "") {
@@ -154,6 +156,7 @@ export default {
       try {
         res.value = null;
         error.value = null;
+        dataError.value = null;
         const {result} = await client.chain.readContract(props.address, parseInt(props.details['entry-point'], 16), encodeArguments(argumentType, {...arg}));
         if (!result) {
           return;
@@ -161,6 +164,7 @@ export default {
         res.value = decodeReturn(responseType, result);
       } catch (e: any) {
         error.value = e.message;
+        dataError.value = e.jse_info?.data;
       }
     }
 
@@ -169,6 +173,7 @@ export default {
         res.value = null;
         txReceipt.value = null;
         error.value = null;
+        dataError.value = null;
 
         const signer = await getSigner(selectedSigner.value!); // TODO prevent from clicking until form is filled
         const tx = await signer.prepareTransaction({
@@ -201,6 +206,7 @@ export default {
       } catch (e: any) {
         console.log(e);
         error.value = e.message;
+        dataError.value = e.jse_info?.data;
       }
     }
 
@@ -214,6 +220,7 @@ export default {
       color: computed(() => props.details['read-only'] ? "#a8bacc" : "#cccccc"),
       fields,
       error,
+      dataError,
       selectedSigner,
       isReadOnly: computed(() => props.details['read-only']),
       isKondorConnected: computed(() => props.signers.length > 0),
