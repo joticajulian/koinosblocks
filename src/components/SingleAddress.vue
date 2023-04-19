@@ -12,12 +12,12 @@
           <va-card-content>
               <ul v-if="!isEmpty">
                   <li v-for="balance in balances">
-            <span>{{ balance.amount }} {{ balance.symbol }}</span>
-          </li>
-        </ul>
-        <p v-if="isEmpty && !loading">This wallet is empty</p>
-      </va-card-content>
-    </va-card>
+                      <span>{{ balance.amount }} {{ balance.symbol }}</span>
+                  </li>
+              </ul>
+              <p v-if="isEmpty && !loading">This wallet is empty</p>
+          </va-card-content>
+      </va-card>
   </va-inner-loading>
   <Contract v-if="isContract" :address="address" :abi="meta.abi" :root="meta.root" :protos="meta.protos"
             :loading="loading"/>
@@ -66,9 +66,13 @@ export default {
     const {getSystemContractAddress} = useNameService();
     const {getKAPNames} = useKAP();
 
+    const VAPOR_TOKEN_ADDRESS = '1KTasVrqvMBofMANKMCT3HMya16sfZPLFB'
+
     const getTokensAddresses = async () => {
+      const customTokens = [VAPOR_TOKEN_ADDRESS];
       const names = ['koin', 'vhp'];
-      return Promise.all(names.map(getSystemContractAddress));
+      const systemContractAddresses = await Promise.all(names.map(getSystemContractAddress));
+      return systemContractAddresses.concat(customTokens)
     }
 
     const getTokenValue = async (tokenContractId: string, address: string): Promise<void> => {
