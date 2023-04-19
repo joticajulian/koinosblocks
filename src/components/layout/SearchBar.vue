@@ -1,16 +1,18 @@
 <template>
   <div class="search-bar">
-    <va-input
-        class="search"
-        placeholder="Search by block, transaction, address or KAP name"
-        :error="error"
-        :error-messages="errorMessage"
-        v-model="input">
-      <template #prependInner>
-        <va-icon name="search"/>
-      </template>
-    </va-input>
-    <va-button size="medium" @click="search()">Search</va-button>
+      <va-input
+              @keyup.enter="search()"
+              :loading="loading"
+              class="search"
+              placeholder="Search by block, transaction, address or KAP name"
+              :error="error"
+              :error-messages="errorMessage"
+              v-model="input">
+          <template #prependInner>
+              <va-icon name="search"/>
+          </template>
+      </va-input>
+      <va-button size="medium" @click="search()">Search</va-button>
   </div>
 </template>
 
@@ -25,6 +27,7 @@ export default {
     const input = ref("");
     const error = ref(false);
     const errorMessage = ref("");
+    const loading = ref(false);
     const {client} = useClient();
     const {getKAPOwnerAddress} = useKAP();
 
@@ -86,6 +89,7 @@ export default {
     }
 
     const search = async () => {
+      loading.value = true;
       error.value = false;
       errorMessage.value = "";
       if (isTransactionId(input.value)) {
@@ -122,12 +126,14 @@ export default {
               error.value = true;
           }
       }
+      loading.value = false;
     };
 
     return {
       input,
       error,
       errorMessage,
+        loading,
       search
     }
   }
