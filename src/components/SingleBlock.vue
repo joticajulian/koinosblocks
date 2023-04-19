@@ -44,7 +44,7 @@ export default {
   components: {RawData, DescriptionRow, EventsTable, TransactionsTable},
   props: {
     id: {
-      type: Number,
+      type: String,
       required: true
     }
   },
