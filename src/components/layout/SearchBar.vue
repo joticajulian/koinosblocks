@@ -2,7 +2,7 @@
   <div class="search-bar">
     <va-input
         class="search"
-        placeholder="Search by block, transaction or address"
+        placeholder="Search by block, transaction, address or KAP name"
         :error="error"
         :error-messages="errorMessage"
         v-model="input">
