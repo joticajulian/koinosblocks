@@ -18,6 +18,7 @@
 import {ref} from "vue";
 import {useClient} from "../../composable/useClient";
 import {utils} from "koilib";
+import {useKAP} from "../../composable/useKAP";
 
 export default {
   setup() {
@@ -25,6 +26,7 @@ export default {
     const error = ref(false);
     const errorMessage = ref("");
     const {client} = useClient();
+    const {getKAPOwnerAddress} = useKAP();
 
     const isTransactionId = (input: string) => {
       if (!input.startsWith('0x1220') || input.length !== 70) {
@@ -71,6 +73,14 @@ export default {
       }
     }
 
+    const KAPExists = async (address: string): string | undefined => {
+        try {
+            return await getKAPOwnerAddress(address);
+        } catch (e) {
+            return;
+        }
+    }
+
     const gotoLink = (type: 'block' | 'tx' | 'address', id: string): string => {
       window.location.href = `/${type}/${id}`;
     }
@@ -104,8 +114,13 @@ export default {
           error.value = true;
         }
       } else {
-        errorMessage.value = 'Invalid input';
-        error.value = true;
+          const address = await KAPExists(input.value);
+          if (address) {
+            gotoLink('address', address);
+          } else {
+              errorMessage.value = 'Invalid input';
+              error.value = true;
+          }
       }
     };
 
