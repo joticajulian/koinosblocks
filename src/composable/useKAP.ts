@@ -33,6 +33,9 @@ export function useKAP() {
             owner: utils.decodeBase58(owner)
         });
         const {result} = await client.chain.readContract(KAP_CONTRACT_ADDRESS, 0xcd5c6518, args);
+        if (!result) {
+            return [];
+        }
         const {names} = decodeResult(root, 'collections.get_names_result', result);
         return names.map((({domain, name}) => `${name}.${domain}`));
     }
