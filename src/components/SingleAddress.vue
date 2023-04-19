@@ -1,10 +1,17 @@
 <template>
   <va-inner-loading :loading="loading">
-    <va-card class="offset--sm row ma-3" stripe stripe-color="success">
-      <va-card-title>Wallet details</va-card-title>
-      <va-card-content>
-        <ul v-if="!isEmpty">
-          <li v-for="balance in balances">
+      <va-card class="offset--sm row ma-3" stripe stripe-color="success">
+          <va-card-title>
+              <p class="mr-3">Wallet details</p>
+              <a class="mr-3" v-if="kaps.length" v-for="kap in kaps" :href="kapLink(kap)" target="_blank" rel="noopener noreferrer">
+                  <va-popover message="Koinos Account Protocol name owner"  color="warning" class="popover">
+                      <va-badge :text=kap color="warning" />
+                  </va-popover>
+              </a>
+          </va-card-title>
+          <va-card-content>
+              <ul v-if="!isEmpty">
+                  <li v-for="balance in balances">
             <span>{{ balance.amount }} {{ balance.symbol }}</span>
           </li>
         </ul>
@@ -28,6 +35,7 @@ import {ContractMeta, useContract} from "../composable/useContract";
 import {useClient} from "../composable/useClient";
 import TransactionHistory from "./address/TransactionHistory.vue";
 import {useNameService} from "../composable/useNameService";
+import {useKAP} from "../composable/useKAP";
 
 interface TokenBalance {
   amount: number,
@@ -46,6 +54,7 @@ export default {
   async setup(props: any) {
 
     const tokens = ref<string[]>([]);
+    const kaps = ref<string[]>([]);
 
     const meta = ref<ContractMeta>({root: null, abi: null, protos: null});
     const loading = ref(true);
@@ -55,6 +64,7 @@ export default {
     const {createToken} = useToken();
     const {fetchContractMeta} = useContract();
     const {getSystemContractAddress} = useNameService();
+    const {getKAPNames} = useKAP();
 
     const getTokensAddresses = async () => {
       const names = ['koin', 'vhp'];
@@ -95,6 +105,7 @@ export default {
         balances.value = [];
         meta.value = await fetchContractMeta(address);
         tokens.value = await getTokensAddresses();
+        kaps.value = await getKAPNames(address);
         await getMana(address);
         await Promise.all(tokens.value.map(async (token) => getTokenValue(token, address)));
       } finally {
@@ -111,9 +122,17 @@ export default {
       meta,
       loading,
       balances: computed(() => balances.value.sort((a, b) => a.symbol.localeCompare(b.symbol))),
-      isEmpty: computed(() => !balances.value.length)
+      isEmpty: computed(() => !balances.value.length),
+      kapLink: (kap: any) => `https://kap.plus/${kap}`,
+      kaps
     }
   }
 }
 
 </script>
+
+<style scoped lang="scss">
+  a {
+    --va-popover-content-font-size: 0.65rem;
+  }
+</style>

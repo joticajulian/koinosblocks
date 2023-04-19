@@ -23,7 +23,22 @@ export function useKAP() {
         return utils.encodeBase58(utils.decodeBase64(owner));
     }
 
+    const getKAPNames = async (owner: string): Promise<string[]> => {
+        const {client} = useClient();
+        const {root} = await fetchContractMeta(KAP_CONTRACT_ADDRESS);
+        if (!root) {
+            throw new Error('Failed to fetch contract meta');
+        }
+        const args = encodeArgs(root, 'collections.get_names_arguments', {
+            owner: utils.decodeBase58(owner)
+        });
+        const {result} = await client.chain.readContract(KAP_CONTRACT_ADDRESS, 0xcd5c6518, args);
+        const {names} = decodeResult(root, 'collections.get_names_result', result);
+        return names.map((({domain, name}) => `${name}.${domain}`));
+    }
+
     return reactive({
-        getKAPOwnerAddress
+        getKAPOwnerAddress,
+        getKAPNames
     })
 }
