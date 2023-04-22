@@ -29,7 +29,7 @@
               class="mb-4"
               color="primary"
               :disabled="!selectedSigner"
-              @click="writeContract(details.argument, details.return)">Sign and send
+              @click="writeContract(details.argument, details.return)">Sign and broadcast
           </va-button>
           <va-button
               v-if="isReadOnly"
@@ -249,4 +249,7 @@ a:hover {
   text-decoration: underline;
 }
 
+pre {
+    white-space: break-spaces;
+}
 </style>
