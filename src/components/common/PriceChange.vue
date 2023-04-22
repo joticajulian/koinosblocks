@@ -1,14 +1,18 @@
 <template>
-  <span v-if="this.value > 0" class="positive">({{sign}}{{formattedValue}}%)</span>
-  <span v-if="this.value < 0" class="negative">({{sign}}{{formattedValue}}%)</span>
+  <span v-if="value > 0" class="positive"
+    >({{ sign }}{{ formattedValue }}%)</span
+  >
+  <span v-if="value < 0" class="negative"
+    >({{ sign }}{{ formattedValue }}%)</span
+  >
 </template>
 <script>
 export default {
   props: {
     value: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {
     formattedValue() {
@@ -16,9 +20,9 @@ export default {
     },
     sign() {
       return this.value > 0 ? '+' : '-';
-    }
-  }
-}
+    },
+  },
+};
 </script>
 <style scoped>
 .positive {

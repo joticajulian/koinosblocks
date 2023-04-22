@@ -5,13 +5,13 @@
 </template>
 
 <script>
-import {useRoute} from 'vue-router'
-import {ref, watch} from "vue";
-import SingleBlock from "../components/SingleBlock.vue";
+import { useRoute } from 'vue-router';
+import { ref, watch } from 'vue';
+import SingleBlock from '../components/SingleBlock.vue';
 
 export default {
   name: 'Block',
-  components: {SingleBlock},
+  components: { SingleBlock },
   setup() {
     const route = useRoute();
     const id = ref(route.params.id);
@@ -21,10 +21,8 @@ export default {
     });
 
     return {
-      id
-    }
-
-  }
+      id,
+    };
+  },
 };
-
 </script>

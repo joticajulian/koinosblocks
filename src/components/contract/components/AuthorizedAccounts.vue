@@ -1,31 +1,32 @@
 <template>
-  <div class="va-text-right mt-3" v-if="accounts.length">
+  <div v-if="accounts.length" class="va-text-right mt-3">
     <p><strong>Authorized accounts:</strong></p>
     <ul>
       <li v-for="account in accounts">
-        {{ account.name }} - <router-link :to="toAddressLink(account.address)">{{ account.address }}</router-link>
+        {{ account.name }} -
+        <router-link :to="toAddressLink(account.address)">
+          {{ account.address }}
+        </router-link>
       </li>
     </ul>
   </div>
 </template>
 
 <script lang="ts">
-
 export default {
   name: 'AuthorizedAccounts',
   props: {
     accounts: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   setup() {
     return {
-      toAddressLink: (address: string) => `/address/${address}`
-    }
-  }
-}
+      toAddressLink: (address: string) => `/address/${address}`,
+    };
+  },
+};
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

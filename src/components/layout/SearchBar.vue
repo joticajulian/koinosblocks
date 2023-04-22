@@ -1,35 +1,36 @@
 <template>
   <div class="search-bar">
-      <va-input
-              @keyup.enter="search()"
-              :loading="loading"
-              class="search"
-              placeholder="Search by block, transaction, address or KAP name"
-              :error="error"
-              :error-messages="errorMessage"
-              v-model="input">
-          <template #prependInner>
-              <va-icon name="search"/>
-          </template>
-      </va-input>
-      <va-button size="medium" @click="search()">Search</va-button>
+    <va-input
+      v-model="input"
+      :loading="loading"
+      class="search"
+      placeholder="Search by block, transaction, address or KAP name"
+      :error="error"
+      :error-messages="errorMessage"
+      @keyup.enter="search()"
+    >
+      <template #prependInner>
+        <va-icon name="search" />
+      </template>
+    </va-input>
+    <va-button size="medium" @click="search()"> Search </va-button>
   </div>
 </template>
 
 <script lang="ts">
-import {ref} from "vue";
-import {useClient} from "../../composable/useClient";
-import {utils} from "koilib";
-import {useKAP} from "../../composable/useKAP";
+import { ref } from 'vue';
+import { useClient } from '../../composable/useClient';
+import { utils } from 'koilib';
+import { useKAP } from '../../composable/useKAP';
 
 export default {
   setup() {
-    const input = ref("");
+    const input = ref('');
     const error = ref(false);
-    const errorMessage = ref("");
+    const errorMessage = ref('');
     const loading = ref(false);
-    const {client} = useClient();
-    const {getKAPOwnerAddress} = useKAP();
+    const { client } = useClient();
+    const { getKAPOwnerAddress } = useKAP();
 
     const isTransactionId = (input: string) => {
       if (!input.startsWith('0x1220') || input.length !== 70) {
@@ -37,7 +38,7 @@ export default {
       }
       const regexp = /0x[0-9A-Fa-f]{68}/g;
       return regexp.test(input);
-    }
+    };
 
     const isAddress = (input: string) => {
       if (input.length !== 34) {
@@ -50,11 +51,13 @@ export default {
       } catch (e) {
         return false;
       }
-    }
+    };
 
     const blockExists = async (blockId: string) => {
       try {
-        const {block_items} = await client.blockStore.getBlocksById([input.value]);
+        const { block_items } = await client.blockStore.getBlocksById([
+          input.value,
+        ]);
         if (block_items.length > 0 && block_items[0].block_id) {
           return true;
         }
@@ -62,11 +65,12 @@ export default {
       } catch (e) {
         return false;
       }
-    }
+    };
 
     const transactionExist = async (transactionId: string) => {
       try {
-        const {transactions} = await client.transactionStore.getTransactionsById([input.value]);
+        const { transactions } =
+          await client.transactionStore.getTransactionsById([input.value]);
         if (transactions && transactions.length > 0) {
           return true;
         }
@@ -74,24 +78,24 @@ export default {
       } catch (e) {
         return false;
       }
-    }
+    };
 
     const KAPExists = async (address: string): string | undefined => {
-        try {
-            return await getKAPOwnerAddress(address);
-        } catch (e) {
-            return;
-        }
-    }
+      try {
+        return await getKAPOwnerAddress(address);
+      } catch (e) {
+        return;
+      }
+    };
 
     const gotoLink = (type: 'block' | 'tx' | 'address', id: string): string => {
       window.location.href = `/${type}/${id}`;
-    }
+    };
 
     const search = async () => {
       loading.value = true;
       error.value = false;
-      errorMessage.value = "";
+      errorMessage.value = '';
       if (isTransactionId(input.value)) {
         if (await blockExists(input.value)) {
           gotoLink('block', input.value);
@@ -99,14 +103,19 @@ export default {
           gotoLink('tx', input.value);
         } else {
           error.value = true;
-          errorMessage.value = 'Could not find transaction or block with specified ID';
+          errorMessage.value =
+            'Could not find transaction or block with specified ID';
         }
       } else if (isAddress(input.value)) {
         gotoLink('address', input.value);
       } else if (Number(input.value).toString() === input.value) {
         try {
-          const {topology} = await client.blockStore.getHighestBlock();
-          const {block_items} = await client.blockStore.getBlocksByHeight(topology.id, Number(input.value), 1);
+          const { topology } = await client.blockStore.getHighestBlock();
+          const { block_items } = await client.blockStore.getBlocksByHeight(
+            topology.id,
+            Number(input.value),
+            1,
+          );
           if (block_items.length > 0 && block_items[0]?.block_id) {
             gotoLink('block', input.value);
           } else {
@@ -118,13 +127,13 @@ export default {
           error.value = true;
         }
       } else {
-          const address = await KAPExists(input.value);
-          if (address) {
-            gotoLink('address', address);
-          } else {
-              errorMessage.value = 'Invalid input';
-              error.value = true;
-          }
+        const address = await KAPExists(input.value);
+        if (address) {
+          gotoLink('address', address);
+        } else {
+          errorMessage.value = 'Invalid input';
+          error.value = true;
+        }
       }
       loading.value = false;
     };
@@ -133,11 +142,11 @@ export default {
       input,
       error,
       errorMessage,
-        loading,
-      search
-    }
-  }
-}
+      loading,
+      search,
+    };
+  },
+};
 </script>
 
 <style scoped>

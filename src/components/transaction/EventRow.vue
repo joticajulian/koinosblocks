@@ -2,75 +2,91 @@
   <tr>
     <td>{{ event.name }}</td>
     <td>
-      <router-link :to=toContractLink(event.source)>{{ event.source }}</router-link>
+      <router-link :to="toContractLink(event.source)">
+        {{ event.source }}
+      </router-link>
     </td>
     <td>
-      <span class="impacted" v-for="wallet in event.impacted" >
-      <router-link class="impacted" :to=toContractLink(wallet)>{{
-          wallet
-        }}
-      </router-link>
+      <span v-for="wallet in event.impacted" class="impacted">
+        <router-link class="impacted" :to="toContractLink(wallet)"
+          >{{ wallet }}
+        </router-link>
       </span>
     </td>
-    <td><pre class="data">{{ humanReadableData ? humanReadableData : event.data }}</pre>
+    <td>
+      <pre class="data">{{
+        humanReadableData ? humanReadableData : event.data
+      }}</pre>
     </td>
     <td>
       <va-popover v-if="!humanReadableData" message="Decode data">
-        <va-icon size="small" @click="decode()" class="material-icons icon">visibility</va-icon>
+        <va-icon size="small" class="material-icons icon" @click="decode()">
+          visibility
+        </va-icon>
       </va-popover>
       <va-popover v-if="humanReadableData" message="Encode data">
-        <va-icon size="small" @click="clearDecoded()" class="material-icons icon">visibility_off</va-icon>
+        <va-icon
+          size="small"
+          class="material-icons icon"
+          @click="clearDecoded()"
+        >
+          visibility_off
+        </va-icon>
       </va-popover>
     </td>
   </tr>
 </template>
 
 <script lang="ts">
-import {useContract} from "../../composable/useContract.js";
-import {useNotification} from "../../composable/useNotification.js";
-import {computed, ref} from "vue";
-import {Root} from "protobufjs";
-import {utils} from "koilib";
+import { useContract } from '../../composable/useContract.js';
+import { useNotification } from '../../composable/useNotification.js';
+import { computed, ref } from 'vue';
+import { Root } from 'protobufjs';
+import { utils } from 'koilib';
 
 export default {
   name: 'EventRow',
   props: {
     event: {
       type: Object,
-      required: true
+      required: true,
     },
   },
   setup(props: any) {
-    const {fetchContractMeta, normalize} = useContract();
-    const {showError} = useNotification();
+    const { fetchContractMeta, normalize } = useContract();
+    const { showError } = useNotification();
 
     const contractId = computed(() => props.event.source);
-    const potentialTypes = computed(() => ([
+    const potentialTypes = computed(() => [
       props.event.name,
       `${props.event.name.split('.')[1]}_event`,
       `${props.event.name.replace('.', '_')}_event`,
-    ]));
+    ]);
     const data = computed(() => props.event.data);
 
-    const humanReadableData = ref<string | null>(null)
+    const humanReadableData = ref<string | null>(null);
 
     const clearDecoded = () => {
       humanReadableData.value = null;
-    }
+    };
 
     const decode = async () => {
       try {
-        const {root, abi} = await fetchContractMeta(contractId.value);
+        const { root, abi } = await fetchContractMeta(contractId.value);
         if (!root || !abi) {
-          showError('Error occurred while reading contract ABI or decoding the data')
+          showError(
+            'Error occurred while reading contract ABI or decoding the data',
+          );
           return;
         }
         humanReadableData.value = decodeData(root, data.value);
       } catch (e) {
         console.error(e);
-        showError('Error occurred while reading contract ABI or decoding the data')
+        showError(
+          'Error occurred while reading contract ABI or decoding the data',
+        );
       }
-    }
+    };
 
     const decodeData = (root: Root, data: any) => {
       let type = null;
@@ -90,21 +106,20 @@ export default {
         arrays: true,
         bytes: Array,
         longs: String,
-        enums: String
+        enums: String,
       });
       const normalized = normalize(type, decoded);
       return JSON.stringify(normalized, null, 2);
-    }
+    };
 
     return {
       humanReadableData,
       clearDecoded,
       decode,
-      toContractLink: (address: string) => `/address/${address}`
-    }
-
-  }
-}
+      toContractLink: (address: string) => `/address/${address}`,
+    };
+  },
+};
 </script>
 <style scoped>
 .icon {
@@ -123,7 +138,4 @@ export default {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-
-
-
 </style>

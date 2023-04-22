@@ -1,72 +1,74 @@
 <template>
   <va-inner-loading :loading="loading">
     <va-card class="offset--sm row ma-3">
-      <va-card-title>{{title}}</va-card-title>
+      <va-card-title>{{ title }}</va-card-title>
       <va-card-content>
-        <table class="va-table va-table--hoverable va-table--striped" style="width: 100%;">
+        <table
+          class="va-table va-table--hoverable va-table--striped"
+          style="width: 100%"
+        >
           <thead>
-          <tr>
-            <th>ID</th>
-            <th>RC limit</th>
-            <th>Payer</th>
-            <th>Operations</th>
-          </tr>
+            <tr>
+              <th>ID</th>
+              <th>RC limit</th>
+              <th>Payer</th>
+              <th>Operations</th>
+            </tr>
           </thead>
           <tbody>
-          <tr v-for="transaction in transactions" :key="transaction.id">
-            <td>
-              <router-link :to="transactionLink(transaction.id)">
-                {{ transaction.id }}
-              </router-link>
-            </td>
-            <td>{{ transaction.header.rc_limit }}</td>
-            <td>
-              <router-link :to="walletLink(transaction.header.payer)">
-                {{ transaction.header.payer }}
-              </router-link>
-            </td>
-            <td>{{ transaction.operations.length }}</td>
-          </tr>
+            <tr v-for="transaction in transactions" :key="transaction.id">
+              <td>
+                <router-link :to="transactionLink(transaction.id)">
+                  {{ transaction.id }}
+                </router-link>
+              </td>
+              <td>{{ transaction.header.rc_limit }}</td>
+              <td>
+                <router-link :to="walletLink(transaction.header.payer)">
+                  {{ transaction.header.payer }}
+                </router-link>
+              </td>
+              <td>{{ transaction.operations.length }}</td>
+            </tr>
           </tbody>
         </table>
-        <RawData :data="transactions"/>
+        <RawData :data="transactions" />
       </va-card-content>
     </va-card>
   </va-inner-loading>
 </template>
 
 <script lang="ts">
-import moment from "moment";
-import RawData from "../common/RawData.vue";
+import moment from 'moment';
+import RawData from '../common/RawData.vue';
 
 export default {
-  components: {RawData},
+  components: { RawData },
   props: {
     transactions: {
       type: Array,
-      required: true
+      required: true,
     },
     title: {
       type: String,
       required: false,
-      default: 'Transactions'
+      default: 'Transactions',
     },
     loading: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
 
   methods: {
     toRelativeTime: (timestamp: number) => {
-      return moment.unix(timestamp / 1000).fromNow()
+      return moment.unix(timestamp / 1000).fromNow();
     },
     toDateTime: (timestamp: number) => {
-      return moment.unix(timestamp / 1000).format("YYYY-MM-DD HH:mm:ss")
+      return moment.unix(timestamp / 1000).format('YYYY-MM-DD HH:mm:ss');
     },
     transactionLink: (txId: string) => `/tx/${txId}`,
-    walletLink: (address: string) => `/address/${address}`
-  }
-}
-
+    walletLink: (address: string) => `/address/${address}`,
+  },
+};
 </script>

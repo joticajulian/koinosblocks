@@ -1,36 +1,36 @@
 <template>
   <div class="proto">
-    <span @click="toggle" class="va-title filename">{{proto.file}}</span>
-    <pre v-if="visible" class="va-code-snippet scrollable">{{proto.definition}}</pre>
+    <span class="va-title filename" @click="toggle">{{ proto.file }}</span>
+    <pre v-if="visible" class="va-code-snippet scrollable">{{
+      proto.definition
+    }}</pre>
   </div>
 </template>
 
 <script>
-import {ref} from "vue";
+import { ref } from 'vue';
 
 export default {
   props: {
     proto: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
-  setup () {
+  setup() {
     const visible = ref(false);
 
     return {
       visible,
       toggle: () => {
         visible.value = !visible.value;
-      }
-    }
-
-  }
-}
+      },
+    };
+  },
+};
 </script>
 
 <style scoped>
-
 .scrollable {
   max-height: 340px;
   overflow-y: scroll;
@@ -46,7 +46,7 @@ export default {
 
 /* add indicator if it's shown or not, depends on toggle */
 .filename::after {
-  content: "▼";
+  content: '▼';
   float: right;
   margin-right: 10px;
 }

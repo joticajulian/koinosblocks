@@ -1,7 +1,11 @@
 <template>
-  <dd class="line" v-if="!link">{{ text }}</dd>
-  <dd class="line" v-if="link">
-    <router-link :to="link">{{ text }}</router-link>
+  <dd v-if="!link" class="line">
+    {{ text }}
+  </dd>
+  <dd v-if="link" class="line">
+    <router-link :to="link">
+      {{ text }}
+    </router-link>
   </dd>
 </template>
 
@@ -10,12 +14,12 @@ export default {
   props: {
     link: {
       type: String,
-      required: false
+      required: false,
     },
     text: {
       type: String,
-      required: true
-    }
-  }
-}
+      required: true,
+    },
+  },
+};
 </script>

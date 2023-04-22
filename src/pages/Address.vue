@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <div class="flex" style="width: 100%;">
+    <div class="flex" style="width: 100%">
       <Suspense>
         <SingleAddress :address="address" />
       </Suspense>
@@ -9,14 +9,14 @@
 </template>
 
 <script lang="ts">
-import {useRoute} from 'vue-router'
-import SingleTransaction from "../components/SingleTransaction.vue";
-import SingleAddress from "../components/SingleAddress.vue";
-import {ref, watch} from "vue";
+import { useRoute } from 'vue-router';
+import SingleTransaction from '../components/SingleTransaction.vue';
+import SingleAddress from '../components/SingleAddress.vue';
+import { ref, watch } from 'vue';
 
 export default {
   name: 'Address',
-  components: {SingleAddress, SingleTransaction},
+  components: { SingleAddress, SingleTransaction },
   setup() {
     const route = useRoute();
     const address = ref(route.params.address);
@@ -26,10 +26,8 @@ export default {
     });
 
     return {
-      address
-    }
-
-  }
+      address,
+    };
+  },
 };
-
 </script>

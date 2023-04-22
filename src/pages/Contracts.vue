@@ -5,16 +5,14 @@
 </template>
 
 <script>
-
-import SystemContractsTable from "../components/SystemContractsTable.vue";
+import SystemContractsTable from '../components/SystemContractsTable.vue';
 export default {
   name: 'Contracts',
-  components: {SystemContractsTable},
+  components: { SystemContractsTable },
   setup() {
     return {
-      id: 1
-    }
-  }
+      id: 1,
+    };
+  },
 };
-
 </script>
