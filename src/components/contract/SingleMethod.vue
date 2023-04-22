@@ -9,7 +9,7 @@
         <RawData v-if="fields.length" :data="fields" label="arguments proto"/>
         <p class="not-authorized" v-if="!isReadOnly && !isKondorConnected">You need to connect Kondor wallet in order to
           write to contract</p>
-        <va-form>
+        <va-form class="mt-2">
           <ContractInputField
               v-if="isReadOnly || isKondorConnected"
               v-for="field in fields"
@@ -24,11 +24,21 @@
               :options="signers"
               v-model="selectedSigner"
           />
+          <va-slider
+              v-if="!isReadOnly && isKondorConnected"
+              label="RC limit"
+              class="mb-4"
+              v-model="rcLimitPercentage"
+              track-label-visible >
+              <template #trackLabel="{ value }">
+                  {{ value }}%
+              </template>
+          </va-slider>
           <va-button
               v-if="!isReadOnly && isKondorConnected"
               class="mb-4"
               color="primary"
-              :disabled="!selectedSigner"
+              :disabled="!selectedSigner || loading"
               @click="writeContract(details.argument, details.return)">Sign and broadcast
           </va-button>
           <va-button
@@ -103,6 +113,8 @@ export default {
     const error = ref(null);
     const dataError = ref(null);
     const selectedSigner = ref<string | null>(null);
+    const rcLimitPercentage = ref(10);
+    const loading = ref(false);
 
     const {client} = useClient();
     const {getSigner} = useKondor();
@@ -170,12 +182,19 @@ export default {
 
     const writeContract = async (argumentType: string, responseType: string) => {
       try {
+        loading.value = true;
         res.value = null;
         txReceipt.value = null;
         error.value = null;
         dataError.value = null;
 
-        const signer = await getSigner(selectedSigner.value!); // TODO prevent from clicking until form is filled
+        const signer = await getSigner(selectedSigner.value!);
+
+        const {rc} = await client.chain.getAccountRC(signer.getAddress());
+        const rcLimit = Math.ceil((Number(rc) * (Number(rcLimitPercentage.value) / 100))).toString();
+
+        console.log(`Using RC limit: ${rcLimit} out of ${rc}`);
+
         const tx = await signer.prepareTransaction({
           operations: [
             {
@@ -185,7 +204,10 @@ export default {
                 entry_point: parseInt(props.details['entry-point'], 16)
               }
             }
-          ]
+          ],
+          header: {
+            rc_limit: rcLimit
+          }
         })
 
         const abis = {
@@ -207,6 +229,8 @@ export default {
         console.log(e);
         error.value = e.message;
         dataError.value = e.jse_info?.data;
+      } finally {
+        loading.value = false;
       }
     }
 
@@ -224,7 +248,9 @@ export default {
       selectedSigner,
       isReadOnly: computed(() => props.details['read-only']),
       isKondorConnected: computed(() => props.signers.length > 0),
-      txReceipt
+      txReceipt,
+      rcLimitPercentage,
+      loading
     }
   }
 }
