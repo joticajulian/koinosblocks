@@ -9,10 +9,10 @@
     <td>{{ humanReadableMethod ? humanReadableMethod: entryPoint }}</td>
     <td><pre>{{ humanReadableArgs ? humanReadableArgs : args }}</pre></td>
     <td>
-      <va-popover v-if="!humanReadableArgs && !humanReadableMethod && type != 'upload_contract'" message="Decode operation" >
+      <va-popover v-if="canDecode && !isDecoded" message="Decode operation" >
         <va-icon size="small" @click="decode()" class="material-icons icon">visibility</va-icon>
       </va-popover>
-      <va-popover v-if="humanReadableArgs && humanReadableMethod" message="Encode operation" >
+      <va-popover v-if="isDecoded" message="Encode operation" >
         <va-icon size="small" @click="clearDecoded()" class="material-icons icon">visibility_off</va-icon>
       </va-popover>
     </td>
@@ -45,7 +45,13 @@ export default {
     console.log(props.operation)
 
     const contractId = computed(() => props.operation[Object.keys(props.operation)[0]].contract_id);
-    const entryPoint = computed(() => props.operation[Object.keys(props.operation)[0]].entry_point ? `0x${props.operation[Object.keys(props.operation)[0]].entry_point?.toString(16)}` : "");
+    const entryPoint = computed(() => {
+        if (props.operation[Object.keys(props.operation)[0]].entry_point === undefined) {
+            return "";
+        }
+        const pad = "00000000";
+        return `0x${(pad + props.operation[Object.keys(props.operation)[0]].entry_point.toString(16)).slice(-pad.length)}`;
+    });
     const args = computed(() => props.operation[Object.keys(props.operation)[0]].args);
 
     const humanReadableMethod = ref<string | null>(null)
@@ -55,10 +61,13 @@ export default {
       try {
         const {root, abi} = await fetchContractMeta(contractId.value);
         if (!root || !abi) {
+            console.warn('No contract proto found');
           return;
         }
         humanReadableMethod.value = findEntryPoint(entryPoint.value, abi);
-        humanReadableArgs.value = decodeArgs(entryPoint.value, args.value, abi, root);
+        if (args.value) {
+            humanReadableArgs.value = decodeArgs(entryPoint.value, args.value, abi, root);
+        }
       } catch (e) {
         console.error(e);
         showError('Error occurred while reading contract proto or decoding the arguments')
@@ -93,6 +102,8 @@ export default {
 
     return {
       type: computed(() => Object.keys(props.operation)[0]),
+      canDecode: computed( () => entryPoint.value),
+      isDecoded: computed(() => humanReadableArgs.value || humanReadableMethod.value),
       contractId,
       entryPoint,
       args,
