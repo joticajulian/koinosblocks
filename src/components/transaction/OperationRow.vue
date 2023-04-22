@@ -42,8 +42,6 @@ export default {
     const {fetchContractMeta, normalize} = useContract();
     const {showError} = useNotification();
 
-    console.log(props.operation)
-
     const contractId = computed(() => props.operation[Object.keys(props.operation)[0]].contract_id);
     const entryPoint = computed(() => {
         if (props.operation[Object.keys(props.operation)[0]].entry_point === undefined) {
