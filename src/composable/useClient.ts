@@ -1,4 +1,4 @@
-import { reactive, Ref, ref } from 'vue';
+import { reactive, ref } from 'vue';
 import { Client } from 'koinos-rpc';
 import { Field } from 'protobufjs';
 

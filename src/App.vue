@@ -4,17 +4,17 @@
     rel="stylesheet"
   />
   <div id="main">
-    <Navbar />
+    <NavigationBar />
     <router-view />
     <Footer />
   </div>
 </template>
 
 <script>
-import Navbar from './components/layout/Navbar.vue';
+import NavigationBar from './components/layout/NavigationBar.vue';
 import Footer from './components/layout/Footer.vue';
 export default {
-  components: { Footer, Navbar },
+  components: { Footer, NavigationBar },
 };
 </script>
 

@@ -3,7 +3,7 @@ import { useClient } from './useClient';
 import { useContract } from './useContract';
 import { utils } from 'koilib';
 
-const mainnetChainid = 'EiBZK_GGVP0H_fXVAM3j6EAuz3-B-l3ejxRSewi7qIBfSA==';
+// const mainnetChainid = 'EiBZK_GGVP0H_fXVAM3j6EAuz3-B-l3ejxRSewi7qIBfSA==';
 const testnetChainId = 'EiAAKqFi-puoXnuJTdn7qBGGJa8yd-dcS2P0ciODe4wupQ==';
 
 export function useNameService() {

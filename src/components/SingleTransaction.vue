@@ -102,7 +102,6 @@
 
 <script lang="ts">
 import { computed, ref } from 'vue';
-import TransactionsTable from './transaction/TransactionsTable.vue';
 import EventsTable from './transaction/EventsTable.vue';
 import OperationsTable from './transaction/OperationsTable.vue';
 import { useClient } from '../composable/useClient';
@@ -115,7 +114,6 @@ export default {
     DescriptionRow,
     OperationsTable,
     EventsTable,
-    TransactionsTable,
   },
   props: {
     txId: {

@@ -1,17 +1,17 @@
 <template>
   <Suspense>
-    <SingleBlock :id="id" />
+    <SingleProposal :id="id" />
   </Suspense>
 </template>
 
 <script>
 import { useRoute } from 'vue-router';
 import { ref, watch } from 'vue';
-import SingleBlock from '../components/SingleBlock.vue';
+import SingleProposal from '../components/SingleProposal.vue';
 
 export default {
-  name: 'Block',
-  components: { SingleBlock },
+  name: 'ProposalPage',
+  components: { SingleProposal },
   setup() {
     const route = useRoute();
     const id = ref(route.params.id);

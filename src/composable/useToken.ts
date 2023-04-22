@@ -1,4 +1,4 @@
-import { reactive, unref } from 'vue';
+import { reactive } from 'vue';
 import { Client } from 'koinos-rpc';
 import { Token } from 'koinos-rpc/dist/helpers/token';
 import { useClient } from './useClient';

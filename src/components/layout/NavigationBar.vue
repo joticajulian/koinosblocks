@@ -31,7 +31,7 @@
 import ApiInput from './ApiInput.vue';
 
 export default {
-  name: 'Navbar',
+  name: 'NavigationBar',
   components: { ApiInput },
 };
 </script>

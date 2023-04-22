@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import { computed } from 'vue';
-import Link from './Link.vue';
+import RichLink from './RichLink.vue';
 
 export interface LinkedRow {
   text: string;
@@ -18,7 +18,7 @@ export interface LinkedRow {
 
 export default {
   name: 'DescriptionRow',
-  components: { Link },
+  components: { Link: RichLink },
   props: {
     description: {
       type: String,

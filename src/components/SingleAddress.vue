@@ -43,8 +43,6 @@
 
 <script lang="ts">
 import { computed, ref, watch } from 'vue';
-import TransactionsTable from './transaction/TransactionsTable.vue';
-import EventsTable from './transaction/EventsTable.vue';
 import Contract from './contract/Contract.vue';
 import { useToken } from '../composable/useToken';
 import { ContractMeta, useContract } from '../composable/useContract';
@@ -59,7 +57,7 @@ interface TokenBalance {
 }
 
 export default {
-  components: { TransactionHistory, Contract, EventsTable, TransactionsTable },
+  components: { TransactionHistory, Contract },
   props: {
     address: {
       type: String,

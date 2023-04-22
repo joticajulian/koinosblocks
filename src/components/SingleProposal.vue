@@ -44,8 +44,7 @@
 </template>
 
 <script lang="ts">
-import SingleBlock from './SingleBlock.vue';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { useClient } from '../composable/useClient';
 import * as koinosPbToProto from '@roamin/koinos-pb-to-proto';
 import * as protobuf from 'protobufjs';
@@ -58,7 +57,7 @@ import ProposalOperationsTable from './proposal/ProposalOperationsTable.vue';
 
 export default {
   name: 'SingleProposal',
-  components: { ProposalOperationsTable, DescriptionRow, RawData, SingleBlock },
+  components: { ProposalOperationsTable, DescriptionRow, RawData },
   props: {
     id: {
       type: String,
@@ -90,7 +89,9 @@ export default {
       for (const proto of protos) {
         try {
           protobuf.parse(proto.definition, root, { keepCase: true });
-        } catch (e) {}
+        } catch (e) {
+          continue;
+        }
       }
       return root;
     };

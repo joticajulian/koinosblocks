@@ -7,7 +7,7 @@
 <script>
 import SystemContractsTable from '../components/SystemContractsTable.vue';
 export default {
-  name: 'Contracts',
+  name: 'ContractsPage',
   components: { SystemContractsTable },
   setup() {
     return {

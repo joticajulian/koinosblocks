@@ -40,7 +40,9 @@ export function useContract() {
     for (const proto of protos) {
       try {
         parse(proto.definition, root, { keepCase: true });
-      } catch (e) {}
+      } catch (e) {
+        continue;
+      }
     }
     return root;
   };

@@ -40,7 +40,7 @@
 <script lang="ts">
 import { computed } from 'vue';
 import SingleMethod from './SingleMethod.vue';
-import Proto from './Proto.vue';
+import ContractProto from './ContractProto.vue';
 import { useKondor } from '../../composable/useKondor';
 import AuthorizedAccounts from './components/AuthorizedAccounts.vue';
 import { Root } from 'protobufjs';
@@ -67,7 +67,7 @@ interface Method {
 }
 
 export default {
-  components: { AuthorizedAccounts, Proto, SingleMethod },
+  components: { AuthorizedAccounts, Proto: ContractProto, SingleMethod },
   props: {
     address: {
       type: String,

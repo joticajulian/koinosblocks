@@ -2,13 +2,13 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import { createVuestic } from 'vuestic-ui';
 import 'vuestic-ui/css';
-import Overview from './pages/Overview.vue';
-import Block from './pages/Block.vue';
+import Overview from './pages/OverviewPage.vue';
+import BlockPage from './pages/BlockPage.vue';
 import TransactionPage from './pages/TransactionPage.vue';
-import Address from './pages/Address.vue';
-import Proposal from './pages/Proposal.vue';
-import Proposals from './pages/Proposals.vue';
-import Contracts from './pages/Contracts.vue';
+import AddressPage from './pages/AddressPage.vue';
+import ProposalPage from './pages/ProposalPage.vue';
+import Proposals from './pages/ProposalsPage.vue';
+import ContractsPage from './pages/ContractsPage.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import hljsVuePlugin from '@highlightjs/vue-plugin';
 import VueGtag from 'vue-gtag';
@@ -17,7 +17,7 @@ const routes = [
   { path: '/', component: Overview },
   {
     path: '/block/:id',
-    component: Block,
+    component: BlockPage,
     meta: { title: 'Koinosblocks.com - block details' },
   },
   {
@@ -27,12 +27,12 @@ const routes = [
   },
   {
     path: '/address/:address',
-    component: Address,
+    component: AddressPage,
     meta: { title: `Koinosblocks.com - address details` },
   },
   {
     path: '/proposal/:id',
-    component: Proposal,
+    component: ProposalPage,
     meta: { title: 'Koinosblocks.com - proposal details' },
   },
   {
@@ -42,7 +42,7 @@ const routes = [
   },
   {
     path: '/contracts',
-    component: Contracts,
+    component: ContractsPage,
     meta: { title: 'Koinosblocks.com - system contracts' },
   },
 ];
@@ -50,7 +50,6 @@ const routes = [
 const router = createRouter({ history: createWebHistory(), routes });
 
 router.beforeEach((to, from, next) => {
-  // @ts-ignore
   document.title =
     to?.meta?.title ?? 'Koinosblocks.com - Koinos blockchain explorer';
   next();

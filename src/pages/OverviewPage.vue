@@ -23,12 +23,11 @@
 
 <script>
 import RecentBlocks from '../components/block/RecentBlocks.vue';
-import Navbar from '../components/layout/Navbar.vue';
 import HeadBlock from '../components/block/HeadBlock.vue';
 import SearchBar from '../components/layout/SearchBar.vue';
 import MarketcapInfo from '../components/common/MarketcapInfo.vue';
 export default {
-  components: { MarketcapInfo, SearchBar, HeadBlock, Navbar, RecentBlocks },
+  components: { MarketcapInfo, SearchBar, HeadBlock, RecentBlocks },
 };
 </script>
 

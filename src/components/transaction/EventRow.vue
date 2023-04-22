@@ -7,7 +7,7 @@
       </router-link>
     </td>
     <td>
-      <span v-for="wallet in event.impacted" class="impacted">
+      <span v-for="wallet in event.impacted" :key="wallet" class="impacted">
         <router-link class="impacted" :to="toContractLink(wallet)"
           >{{ wallet }}
         </router-link>

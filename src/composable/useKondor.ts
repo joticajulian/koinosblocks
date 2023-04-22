@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import * as kondor from 'engrave-kondor-js';
+import * as kondor from 'kondor-js';
 
 export interface KondorAccount {
   name: string;
@@ -13,6 +13,7 @@ export function useKondor() {
     kondor
       .getAccounts()
       .then((accs: any) => {
+        // TODO verify type in kondor package
         accounts.value = accs;
       })
       .catch((e) => {
