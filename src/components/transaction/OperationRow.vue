@@ -9,7 +9,7 @@
     <td>{{ humanReadableMethod ? humanReadableMethod: entryPoint }}</td>
     <td><pre>{{ humanReadableArgs ? humanReadableArgs : args }}</pre></td>
     <td>
-      <va-popover v-if="!humanReadableArgs && !humanReadableMethod" message="Decode operation" >
+      <va-popover v-if="!humanReadableArgs && !humanReadableMethod && type != 'upload_contract'" message="Decode operation" >
         <va-icon size="small" @click="decode()" class="material-icons icon">visibility</va-icon>
       </va-popover>
       <va-popover v-if="humanReadableArgs && humanReadableMethod" message="Encode operation" >
@@ -42,8 +42,10 @@ export default {
     const {fetchContractMeta, normalize} = useContract();
     const {showError} = useNotification();
 
+    console.log(props.operation)
+
     const contractId = computed(() => props.operation[Object.keys(props.operation)[0]].contract_id);
-    const entryPoint = computed(() => `0x${props.operation[Object.keys(props.operation)[0]].entry_point.toString(16)}`);
+    const entryPoint = computed(() => props.operation[Object.keys(props.operation)[0]].entry_point ? `0x${props.operation[Object.keys(props.operation)[0]].entry_point?.toString(16)}` : "");
     const args = computed(() => props.operation[Object.keys(props.operation)[0]].args);
 
     const humanReadableMethod = ref<string | null>(null)
@@ -110,5 +112,10 @@ export default {
 }
 .icon:hover {
   cursor: pointer;
+}
+
+pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
 </style>

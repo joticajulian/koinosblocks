@@ -120,8 +120,10 @@ export default {
 }
 
 .data {
-  /*overflow: scroll;*/
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+
+
 </style>
