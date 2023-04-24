@@ -9,16 +9,13 @@ export interface KondorAccount {
 const accounts = ref<KondorAccount[]>([]);
 
 export function useKondor() {
-  const requestAccounts = () => {
-    kondor
-      .getAccounts()
-      .then((accs: any) => {
-        // TODO verify type in kondor package
-        accounts.value = accs;
-      })
-      .catch((e) => {
-        console.error('error', e);
-      });
+  const requestAccounts = async () => {
+    try {
+      accounts.value =
+        (await kondor.getAccounts()) as unknown as KondorAccount[]; // Types in kondor-js are wrong
+    } catch (e) {
+      console.error('error', e);
+    }
   };
 
   return {

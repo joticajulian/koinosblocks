@@ -2,7 +2,12 @@
   <dl>
     <dt>{{ description }}</dt>
     <dd>
-      <Link v-for="line in lines" :link="line.link" :text="line.text" />
+      <RichLink
+        v-for="(line, index) in lines"
+        :key="index"
+        :link="line.link"
+        :text="line.text"
+      />
     </dd>
   </dl>
 </template>
@@ -18,7 +23,7 @@ export interface LinkedRow {
 
 export default {
   name: 'DescriptionRow',
-  components: { Link: RichLink },
+  components: { RichLink },
   props: {
     description: {
       type: String,

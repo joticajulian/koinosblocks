@@ -14,19 +14,22 @@
           You need to connect Kondor wallet in order to write to contract
         </p>
         <va-form class="mt-2">
+          <!-- eslint-disable -->
           <ContractInputField
             v-for="field in fields"
             v-if="isReadOnly || isKondorConnected"
+            :key="field.name"
             v-model="arg[field.name]"
             :argument="field"
           />
+          <!-- eslint enable -->
           <va-select
             v-if="!isReadOnly && isKondorConnected"
             v-model="selectedSigner"
-            style="width: 100%"
+            :options="signers"
             class="mb-4"
             label="Sign as"
-            :options="signers"
+            style="width: 100%"
           />
           <va-slider
             v-if="!isReadOnly && isKondorConnected"
@@ -75,7 +78,7 @@
 
 <script lang="ts">
 import { computed, reactive, ref } from 'vue';
-import { VaButton, VaCollapse, VaInput } from 'vuestic-ui';
+import { VaButton, VaCollapse } from 'vuestic-ui';
 import { Argument, useClient } from '../../composable/useClient';
 import ContractInputField from './contractForm/ContractInputField.vue';
 import { useKondor } from '../../composable/useKondor';
@@ -195,10 +198,7 @@ export default {
       }
     };
 
-    const writeContract = async (
-      argumentType: string,
-      responseType: string,
-    ) => {
+    const writeContract = async (argumentType: string) => {
       try {
         loading.value = true;
         res.value = null;

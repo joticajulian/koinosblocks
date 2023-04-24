@@ -6,15 +6,15 @@
   <div id="main">
     <NavigationBar />
     <router-view />
-    <Footer />
+    <FooterBar />
   </div>
 </template>
 
 <script>
 import NavigationBar from './components/layout/NavigationBar.vue';
-import Footer from './components/layout/Footer.vue';
+import FooterBar from './components/layout/FooterBar.vue';
 export default {
-  components: { Footer, NavigationBar },
+  components: { FooterBar, NavigationBar },
 };
 </script>
 

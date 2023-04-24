@@ -15,16 +15,12 @@
               <th>Address</th>
             </tr>
           </thead>
-          <tbody>
-            <tr
-              v-for="contract in contracts"
-              v-if="contracts.length"
-              :key="contract.name"
-            >
+          <tbody v-if="contracts.length">
+            <tr v-for="contract in contracts" :key="contract.name">
               <td>{{ contract.name }}</td>
               <td>{{ contract.description }}</td>
               <td>
-                <router-link :to="toContractLink(contract.address)">
+                <router-link :to="toContractLink(contract.address!)">
                   {{ contract.address }}
                 </router-link>
               </td>

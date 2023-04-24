@@ -53,7 +53,7 @@ export default {
       }
     };
 
-    const blockExists = async (blockId: string) => {
+    const blockExists = async () => {
       try {
         const { block_items } = await client.blockStore.getBlocksById([
           input.value,
@@ -67,7 +67,7 @@ export default {
       }
     };
 
-    const transactionExist = async (transactionId: string) => {
+    const transactionExist = async () => {
       try {
         const { transactions } =
           await client.transactionStore.getTransactionsById([input.value]);

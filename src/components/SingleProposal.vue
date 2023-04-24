@@ -65,7 +65,7 @@ export default {
     },
   },
   setup(props: any) {
-    const id = ref(props.id);
+    const proposalId = ref(props.id);
     const loading = ref(true);
     const root = ref<Root | null>(null);
     const details = ref<any | null>(null);
@@ -117,6 +117,7 @@ export default {
         args,
       );
       const buf = base64url.toBuffer(result);
+      // eslint-disable-next-line no-unsafe-optional-chaining
       const { value } = returnType?.decode(buf).toJSON();
       details.value = value;
     };
@@ -138,7 +139,7 @@ export default {
       });
 
     return {
-      id,
+      proposalId,
       loading,
       details,
       toProposalId: (root: string) =>

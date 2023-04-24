@@ -3,26 +3,28 @@
     <va-card class="offset--sm row ma-3" stripe stripe-color="success">
       <va-card-title>
         <p class="mr-3">Wallet details</p>
-        <a
-          v-for="kap in kaps"
-          v-if="kaps.length"
-          class="mr-3"
-          :href="kapLink(kap)"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <va-popover
-            message="Koinos Account Protocol name owner"
-            color="warning"
-            class="popover"
+        <div class="kaps-list" v-if="kaps.length">
+          <a
+            v-for="kap in kaps"
+            :key="kap"
+            class="mr-3"
+            :href="kapLink(kap)"
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            <va-badge :text="kap" color="warning" />
-          </va-popover>
-        </a>
+            <va-popover
+              message="Koinos Account Protocol name owner"
+              color="warning"
+              class="popover"
+            >
+              <va-badge :text="kap" color="warning" />
+            </va-popover>
+          </a>
+        </div>
       </va-card-title>
       <va-card-content>
         <ul v-if="!isEmpty">
-          <li v-for="balance in balances">
+          <li v-for="balance in sortedBalances" :key="balance.symbol">
             <span>{{ balance.amount }} {{ balance.symbol }}</span>
           </li>
         </ul>
@@ -30,7 +32,7 @@
       </va-card-content>
     </va-card>
   </va-inner-loading>
-  <Contract
+  <ContractDetails
     v-if="isContract"
     :address="address"
     :abi="meta.abi"
@@ -42,8 +44,8 @@
 </template>
 
 <script lang="ts">
-import { computed, ref, watch } from 'vue';
-import Contract from './contract/Contract.vue';
+import { computed, defineComponent, ref, watch } from 'vue';
+import ContractDetails from './contract/ContractDetails.vue';
 import { useToken } from '../composable/useToken';
 import { ContractMeta, useContract } from '../composable/useContract';
 import { useClient } from '../composable/useClient';
@@ -56,8 +58,8 @@ interface TokenBalance {
   symbol: string;
 }
 
-export default {
-  components: { TransactionHistory, Contract },
+export default defineComponent({
+  components: { TransactionHistory, ContractDetails },
   props: {
     address: {
       type: String,
@@ -65,7 +67,7 @@ export default {
     },
   },
 
-  async setup(props: any) {
+  async setup(props) {
     const tokens = ref<string[]>([]);
     const kaps = ref<string[]>([]);
 
@@ -140,23 +142,33 @@ export default {
 
     setTimeout(() => refreshData(props.address), 1);
 
+    const sortedBalances = computed(() => {
+      const unsortedBalances = JSON.parse(JSON.stringify(balances.value));
+      return unsortedBalances.sort((a, b) => a.symbol.localeCompare(b.symbol));
+    });
+
     return {
       isContract: computed(() => meta.value?.abi && meta.value?.root),
       meta,
       loading,
-      balances: computed(() =>
-        balances.value.sort((a, b) => a.symbol.localeCompare(b.symbol)),
-      ),
+      sortedBalances,
       isEmpty: computed(() => !balances.value.length),
-      kapLink: (kap: any) => `https://kap.plus/${kap}`,
+      kapLink: (kap: string) => `https://kap.plus/${kap}`,
       kaps,
     };
   },
-};
+});
 </script>
 
 <style scoped lang="scss">
 a {
   --va-popover-content-font-size: 0.65rem;
+}
+.kaps-list {
+  display: flex;
+  flex-wrap: wrap;
+  a {
+    margin: 2px 0;
+  }
 }
 </style>

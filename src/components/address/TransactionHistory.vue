@@ -8,6 +8,7 @@
             <va-infinite-scroll :load="fetchTransactions">
               <TransactionHistoryRow
                 v-for="row in transactions"
+                :key="row.id"
                 :row="row"
                 :address="address"
               />

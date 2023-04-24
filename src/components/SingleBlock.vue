@@ -77,16 +77,16 @@
 </template>
 
 <script lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 import TransactionsTable from './transaction/TransactionsTable.vue';
 import EventsTable from './transaction/EventsTable.vue';
 import { useClient } from '../composable/useClient';
 import DescriptionRow, { LinkedRow } from './common/DescriptionRow.vue';
 import RawData from './common/RawData.vue';
 import moment from 'moment/moment';
-import { Block, Transaction } from 'koinos-rpc';
+import { Block } from 'koinos-rpc';
 
-export default {
+export default defineComponent({
   components: { RawData, DescriptionRow, EventsTable, TransactionsTable },
   props: {
     id: {
@@ -95,7 +95,7 @@ export default {
     },
   },
 
-  async setup(props: any) {
+  async setup(props) {
     const { client } = useClient();
 
     const block_topology = ref<Block | null>(null);
@@ -136,7 +136,8 @@ export default {
     const events = computed(() => {
       const events = [];
       if (block_topology.value?.receipt?.events) {
-        events.push(...block_topology.value?.receipt?.events!);
+        // eslint-disable-next-line no-unsafe-optional-chaining
+        events.push(...block_topology.value?.receipt?.events);
       }
       if (block_topology.value?.receipt?.transaction_receipts) {
         block_topology.value.receipt?.transaction_receipts.reduce(
@@ -183,5 +184,5 @@ export default {
       },
     };
   },
-};
+});
 </script>

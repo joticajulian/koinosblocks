@@ -40,7 +40,7 @@
 import gitlab from '/icons/gitlab.svg';
 import twitter from '/icons/twitter.svg';
 export default {
-  name: 'Footer',
+  name: 'FooterBar',
   data() {
     return {
       gitlab,
