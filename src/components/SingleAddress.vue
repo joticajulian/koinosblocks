@@ -122,13 +122,22 @@ export default defineComponent({
       }
     };
 
+    const getKoinosAddressProtocolNames = async (address: string) => {
+      try {
+        return await getKAPNames(address);
+      } catch (e) {
+        console.error(e);
+        return [];
+      }
+    };
+
     const refreshData = async (address: string) => {
       try {
         loading.value = true;
         balances.value = [];
         meta.value = await fetchContractMeta(address);
         tokens.value = await getTokensAddresses();
-        kaps.value = await getKAPNames(address);
+        kaps.value = await getKoinosAddressProtocolNames(address);
         await getMana(address);
         await Promise.all(
           tokens.value.map(async (token) => getTokenValue(token, address)),
