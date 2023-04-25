@@ -41,7 +41,7 @@ export default {
     };
 
     const isAddress = (input: string) => {
-      if (input.length !== 34) {
+      if (input.length < 26 || input.length > 35) {
         return false;
       }
 
