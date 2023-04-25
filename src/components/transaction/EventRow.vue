@@ -57,17 +57,29 @@ export default {
     const { showError } = useNotification();
 
     const contractId = computed(() => props.event.source);
-    const potentialTypes = computed(() => [
-      props.event.name,
-      `${props.event.name.split('.')[1]}_event`,
-      `${props.event.name.replace('.', '_')}_event`,
-    ]);
+
     const data = computed(() => props.event.data);
 
     const humanReadableData = ref<string | null>(null);
 
     const clearDecoded = () => {
       humanReadableData.value = null;
+    };
+
+    const getPotentialEventTypes = (abi: any, event: any) => {
+      const types = [
+        event.name,
+        `${event.name.split('.')[1]}_event`,
+        `${event.name.replace('.', '_')}_event`,
+      ];
+
+      if (abi.events) {
+        const eventType = Object.keys(abi.events).find((e) => e === event.name);
+        if (eventType) {
+          types.push(abi.events[eventType].argument);
+        }
+      }
+      return types;
     };
 
     const decode = async () => {
@@ -79,7 +91,7 @@ export default {
           );
           return;
         }
-        humanReadableData.value = decodeData(root, data.value);
+        humanReadableData.value = decodeData(root, abi, data.value);
       } catch (e) {
         console.error(e);
         showError(
@@ -88,9 +100,10 @@ export default {
       }
     };
 
-    const decodeData = (root: Root, data: any) => {
+    const decodeData = (root: Root, abi: any, data: any) => {
+      const potentialTypes = getPotentialEventTypes(abi, props.event);
       let type = null;
-      for (const potentialType of potentialTypes.value) {
+      for (const potentialType of potentialTypes) {
         try {
           type = root.lookupType(potentialType);
         } catch (e) {
