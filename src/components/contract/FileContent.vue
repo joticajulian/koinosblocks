@@ -1,9 +1,7 @@
 <template>
   <div class="proto">
-    <span class="va-title filename" @click="toggle">{{ proto.file }}</span>
-    <pre v-if="visible" class="va-code-snippet scrollable">{{
-      proto.definition
-    }}</pre>
+    <span class="va-title filename" @click="toggle">{{ filename }}</span>
+    <pre v-if="visible" class="va-code-snippet scrollable">{{ content }}</pre>
   </div>
 </template>
 
@@ -12,8 +10,12 @@ import { ref } from 'vue';
 
 export default {
   props: {
-    proto: {
-      type: Object,
+    filename: {
+      type: String,
+      required: true,
+    },
+    content: {
+      type: String,
       required: true,
     },
   },
@@ -52,5 +54,9 @@ export default {
 }
 .proto {
   margin: 1em 1em;
+}
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 </style>

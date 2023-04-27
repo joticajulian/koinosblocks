@@ -31,7 +31,18 @@
         />
         <br />
         <h1>Proto files</h1>
-        <Proto v-for="proto in protos" :key="proto.name" :proto="proto" />
+        <FileContent
+          v-for="proto in protos"
+          :key="proto.name"
+          :filename="proto.file"
+          :content="proto.definition"
+        />
+        <h1 v-if="abi">Application Binary Interface (ABI)</h1>
+        <FileContent
+          v-if="abi"
+          filename="contract.abi"
+          :content="JSON.stringify(abi, null, 2)"
+        />
       </va-card-content>
     </va-card>
   </va-inner-loading>
@@ -40,7 +51,7 @@
 <script lang="ts">
 import { computed } from 'vue';
 import SingleMethod from './SingleMethod.vue';
-import ContractProto from './ContractProto.vue';
+import FileContent from './FileContent.vue';
 import { useKondor } from '../../composable/useKondor';
 import AuthorizedAccounts from './components/AuthorizedAccounts.vue';
 import { Root } from 'protobufjs';
@@ -67,7 +78,7 @@ interface Method {
 }
 
 export default {
-  components: { AuthorizedAccounts, Proto: ContractProto, SingleMethod },
+  components: { AuthorizedAccounts, FileContent, SingleMethod },
   props: {
     address: {
       type: String,
