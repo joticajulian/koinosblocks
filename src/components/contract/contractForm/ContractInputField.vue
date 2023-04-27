@@ -30,8 +30,6 @@ export default {
     const encodedInput = ref<Uint8Array | number | string | null>(null);
 
     const encodeValue = (value: any) => {
-      console.log('encode value', value);
-      console.log(props.argument.details);
       if (props.argument.details.type !== 'bytes') return value; // TODO change and fix
 
       if (!props.argument.details?.options['(koinos.btype)']) {
@@ -59,6 +57,7 @@ export default {
     watch(userInput, (value) => {
       if (value === '') {
         encodedInput.value = null;
+        context.emit('update:modelValue', encodedInput.value);
         return;
       }
       encodedInput.value = encodeValue(value);
