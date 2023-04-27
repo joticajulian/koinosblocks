@@ -10,6 +10,7 @@
       <div class="method-content">
         <pre>{{ source }}</pre>
         <RawData v-if="fields.length" :data="fields" label="arguments proto" />
+        <RawData v-if="returnProto" :data="returnProto" label="return proto" />
         <p v-if="!isReadOnly && !isKondorConnected" class="not-authorized">
           You need to connect Kondor wallet in order to write to contract
         </p>
@@ -58,6 +59,9 @@
             Read
           </va-button>
           <pre v-if="res">Response: {{ JSON.stringify(res, null, 2) }}</pre>
+          <pre v-if="responseLogs">
+Logs: {{ JSON.stringify(responseLogs, null, 2) }}</pre
+          >
           <div v-if="txReceipt">
             <span>
               Transaction with ID
@@ -79,12 +83,13 @@
 <script lang="ts">
 import { computed, reactive, ref } from 'vue';
 import { VaButton, VaCollapse } from 'vuestic-ui';
-import { Argument, useClient } from '../../composable/useClient';
 import ContractInputField from './contractForm/ContractInputField.vue';
+import { Argument, useClient } from '../../composable/useClient';
 import { useKondor } from '../../composable/useKondor';
 import { utils } from 'koilib';
 import { Root, Type } from 'protobufjs';
 import RawData from '../common/RawData.vue';
+import { useContract } from '../../composable/useContract';
 
 export default {
   components: { RawData, VaCollapse, ContractInputField, VaButton },
@@ -118,6 +123,7 @@ export default {
   setup(props: any) {
     const res = ref<any | null>(null);
     const arg = reactive({});
+    const responseLogs = ref<any | null>(null);
 
     const txReceipt = ref(null);
 
@@ -129,6 +135,7 @@ export default {
 
     const { client } = useClient();
     const { getSigner } = useKondor();
+    const { decodeResult } = useContract();
 
     const getType = (type_description: string): Type =>
       props.root.lookup(type_description);
@@ -142,14 +149,6 @@ export default {
       return utils.encodeBase64url(
         Buffer.from(inputType.encode(message!).finish()),
       );
-    };
-
-    const decodeReturn = (type: string, result: string): any => {
-      if (type == '') {
-        return result;
-      }
-      const buffer = utils.decodeBase64url(result);
-      return getType(type).decode(buffer).toJSON();
     };
 
     const fields = computed<Argument[]>((): Argument[] => {
@@ -168,6 +167,17 @@ export default {
       });
     });
 
+    const returnProto = computed(() => {
+      if (!props.root || props.details.return == '') {
+        return null;
+      }
+      const type = getType(props.details.return);
+      if (!type || !type.fields) {
+        return null;
+      }
+      return type.fields;
+    });
+
     const convertEntryPoints = (methods: any) => {
       return Object.keys(methods).reduce((acc: any, key: string) => {
         acc[key] = {
@@ -181,9 +191,10 @@ export default {
     const readContract = async (argumentType: string, responseType: string) => {
       try {
         res.value = null;
+        responseLogs.value = null;
         error.value = null;
         dataError.value = null;
-        const { result } = await client.chain.readContract(
+        const { result, logs } = await client.chain.readContract(
           props.address,
           parseInt(props.details['entry-point'], 16),
           encodeArguments(argumentType, { ...arg }),
@@ -191,7 +202,8 @@ export default {
         if (!result) {
           return;
         }
-        res.value = decodeReturn(responseType, result);
+        res.value = decodeResult(props.root, responseType, result);
+        responseLogs.value = logs;
       } catch (e: any) {
         error.value = e.message;
         dataError.value = e.jse_info?.data;
@@ -202,6 +214,7 @@ export default {
       try {
         loading.value = true;
         res.value = null;
+        responseLogs.value = null;
         txReceipt.value = null;
         error.value = null;
         dataError.value = null;
@@ -239,12 +252,17 @@ export default {
 
         const signedTx = await signer.signTransaction(tx, abis);
 
-        const { receipt } = await client.call('chain', 'submit_transaction', {
-          transaction: signedTx,
-          broadcast: true,
-        });
+        const { receipt, logs } = await client.call(
+          'chain',
+          'submit_transaction',
+          {
+            transaction: signedTx,
+            broadcast: true,
+          },
+        );
         console.log(receipt);
         txReceipt.value = receipt;
+        responseLogs.value = logs;
       } catch (e: any) {
         console.log(e);
         error.value = e.message;
@@ -273,6 +291,8 @@ export default {
       txReceipt,
       rcLimitPercentage,
       loading,
+      returnProto,
+      responseLogs,
     };
   },
 };
@@ -298,5 +318,6 @@ a:hover {
 
 pre {
   white-space: break-spaces;
+  margin: 5px 0;
 }
 </style>
