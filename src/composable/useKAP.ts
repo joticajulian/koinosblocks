@@ -22,7 +22,7 @@ export function useKAP() {
       0xe5070a16,
       args,
     );
-    const { owner } = decodeResult(root, 'collections.name_object', result);
+    const { owner } = decodeResult(root, 'collections.name_object', result); // TODO change if decodeResult contains normalizing
     return utils.encodeBase58(utils.decodeBase64(owner));
   };
 

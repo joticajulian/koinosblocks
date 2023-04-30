@@ -97,14 +97,15 @@ export function useContract() {
       return result;
     }
     const buffer = utils.decodeBase64url(result);
-    const typeObj = root.lookupType(type);
-    const decoded = typeObj.toObject(typeObj.decode(buffer), {
-      arrays: true,
-      bytes: String,
-      longs: String,
-      enums: String,
-    });
-    return normalize(typeObj, decoded);
+    // const typeObj = root.lookupType(type);
+    // const decoded = typeObj.toObject(typeObj.decode(buffer), {
+    //   arrays: true,
+    //   bytes: String,
+    //   longs: String,
+    //   enums: String,
+    // });
+    // return normalize(typeObj, decoded);
+    return root.lookupType(type).decode(buffer).toJSON();
   };
 
   return {
