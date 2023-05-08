@@ -10,9 +10,11 @@
         </div>
       </va-navbar-item>
     </template>
-    <!--    <template #center>-->
-    <!--      <va-navbar-item>Center</va-navbar-item>-->
-    <!--    </template>-->
+    <template #center>
+      <va-navbar-item>
+        <div class="hash">#{{ gitHash }}</div>
+      </va-navbar-item>
+    </template>
     <template #right>
       <va-navbar-item>
         <a
@@ -39,12 +41,15 @@
 <script>
 import gitlab from '/icons/gitlab.svg';
 import twitter from '/icons/twitter.svg';
+import { config } from '../../config';
 export default {
   name: 'FooterBar',
-  data() {
+  setup() {
+    const gitHash = config.GIT_COMMIT_HASH;
     return {
       gitlab,
       twitter,
+      gitHash,
     };
   },
 };
@@ -73,6 +78,15 @@ a:hover {
   -webkit-box-align: center;
   align-items: center;
   gap: 8px;
+}
+
+.hash {
+  margin: 5px;
+  padding: 0px;
+  font-size: 0.625rem;
+  font-weight: 500;
+  font-family: Inter, sans-serif;
+  text-transform: uppercase;
 }
 
 .icon {

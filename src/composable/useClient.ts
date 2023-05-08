@@ -1,9 +1,10 @@
 import { reactive, ref } from 'vue';
 import { Client } from 'koinos-rpc';
 import { Field } from 'protobufjs';
+import { config } from '../config';
 
 const client = ref<Client>(
-  new Client([localStorage.getItem('api') ?? 'https://api.koinosblocks.com']),
+  new Client([localStorage.getItem('api') ?? config.DEFAULT_API_NODES[0]]),
 );
 
 export interface Argument {

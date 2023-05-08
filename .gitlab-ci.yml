@@ -14,9 +14,12 @@ build:
   before_script:
     - echo $CI_JOB_TOKEN | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
   script:
-    - docker build . -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-    - docker push $CI_REGISTRY_IMAGE:latest
+    - docker build . -t $CI_REGISTRY_IMAGE:mainnet-$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:mainnet-latest --build-arg CHAIN_ID=EiBZK_GGVP0H_fXVAM3j6EAuz3-B-l3ejxRSewi7qIBfSA== --build-arg GIT_COMMIT=$CI_COMMIT_SHA
+    - docker build . -t $CI_REGISTRY_IMAGE:harbinger-$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:harbinger-latest --build-arg CHAIN_ID=EiAAKqFi-puoXnuJTdn7qBGGJa8yd-dcS2P0ciODe4wupQ== --build-arg GIT_COMMIT=$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:mainnet-$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE:harbinger-$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE:mainnet-latest
+    - docker push $CI_REGISTRY_IMAGE:harbinger-latest
 
 deploy:
   stage: deploy

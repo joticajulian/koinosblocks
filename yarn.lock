@@ -909,13 +909,6 @@ dot-prop@^6.0.1:
   dependencies:
     is-obj "^2.0.0"
 
-engrave-kondor-js@0.3.1:
-  version "0.3.1"
-  resolved "https://registry.npmjs.org/engrave-kondor-js/-/engrave-kondor-js-0.3.1.tgz"
-  integrity sha512-u/5ifE/7PQmSj5TD/fUPWQumGe7jnLL4PcLM/Mo5Si8y+rRXwHQD0H5VLpdVc1GTB1UGMnafqifhVWcUrQdU3w==
-  dependencies:
-    koilib "^5.0.0"
-
 entities@^2.0.0:
   version "2.2.0"
   resolved "https://registry.npmjs.org/entities/-/entities-2.2.0.tgz"
@@ -1632,17 +1625,6 @@ koilib@5.5.5:
     "@noble/hashes" "^1.1.2"
     "@noble/secp256k1" "^1.6.3"
     "@roamin/koinos-pb-to-proto" "^0.0.3"
-    cross-fetch "^3.1.5"
-    multibase "^4.0.6"
-    protobufjs "^7.0.0"
-
-koilib@^5.0.0:
-  version "5.1.0"
-  resolved "https://registry.npmjs.org/koilib/-/koilib-5.1.0.tgz"
-  integrity sha512-hPXJ4ZOK7DHvxRaOABjEMXabWMeDrvl3m2pfCcaYP1IIUuPq6qfosZMb2j9CyZGDGpIhTHD+EmfgO8j0lmHC1g==
-  dependencies:
-    "@noble/hashes" "^1.1.2"
-    "@noble/secp256k1" "^1.6.3"
     cross-fetch "^3.1.5"
     multibase "^4.0.6"
     protobufjs "^7.0.0"
