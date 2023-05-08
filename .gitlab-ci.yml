@@ -11,13 +11,14 @@ services:
   before_script:
     - echo $CI_JOB_TOKEN | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
   script:
-    - docker build . \
-      --cache-from $CI_REGISTRY_IMAGE:$IMAGE_TAG-latest \
-      --build-arg CHAIN_ID=$CHAIN_ID \
-      --build-arg GIT_COMMIT_HASH=$CI_COMMIT_SHORT_SHA \
-      --build-arg BUILDKIT_INLINE_CACHE=1 \
-      -t $CI_REGISTRY_IMAGE:$IMAGE_TAG-$CI_COMMIT_SHORT_SHA \
-      -t $CI_REGISTRY_IMAGE:$IMAGE_TAG-latest
+    - >
+      docker build .
+        --cache-from $CI_REGISTRY_IMAGE:$IMAGE_TAG-latest
+        --build-arg CHAIN_ID=$CHAIN_ID
+        --build-arg GIT_COMMIT_HASH=$CI_COMMIT_SHORT_SHA
+        --build-arg BUILDKIT_INLINE_CACHE=1
+        -t $CI_REGISTRY_IMAGE:$IMAGE_TAG-$CI_COMMIT_SHORT_SHA
+        -t $CI_REGISTRY_IMAGE:$IMAGE_TAG-latest
 
     - docker push $CI_REGISTRY_IMAGE:$IMAGE_TAG-$CI_COMMIT_SHORT_SHA
     - docker push $CI_REGISTRY_IMAGE:$IMAGE_TAG-latest
