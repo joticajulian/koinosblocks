@@ -1,8 +1,10 @@
 FROM node:16.17.0 AS builder
 WORKDIR /app
-COPY . .
+COPY package.json yarn.lock ./
 
 RUN yarn install --frozen-lockfile
+
+COPY . .
 
 # default to mainnet
 ARG CHAIN_ID=EiBZK_GGVP0H_fXVAM3j6EAuz3-B-l3ejxRSewi7qIBfSA==
