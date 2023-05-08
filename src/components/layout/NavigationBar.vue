@@ -18,6 +18,11 @@
           >Mining pool</a
         >
       </va-navbar-item>
+      <va-navbar-item>
+        <a :href="switchToNetworkUrl" target="_blank">{{
+          switchToNetworkName
+        }}</a>
+      </va-navbar-item>
     </template>
     <template #right>
       <va-navbar-item>
@@ -29,10 +34,19 @@
 
 <script>
 import ApiInput from './ApiInput.vue';
+import { config } from '../../config';
 
 export default {
   name: 'NavigationBar',
   components: { ApiInput },
+  setup() {
+    const switchToNetworkName = config.SWITCH_TO_NETWORK_NAME;
+    const switchToNetworkUrl = config.SWITCH_TO_NETWORK_URL;
+    return {
+      switchToNetworkName,
+      switchToNetworkUrl,
+    };
+  },
 };
 </script>
 

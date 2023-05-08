@@ -15,4 +15,10 @@ export const config = {
   CHAIN_ID,
   GIT_COMMIT_HASH: import.meta.env.VITE_GIT_COMMIT_HASH || 'dev', // Git commit hash of the build
   DEFAULT_API_NODES: getDefaultApiNodes(),
+  SWITCH_TO_NETWORK_NAME:
+    CHAIN_ID == HARBINGER_CHAIN_ID ? 'Mainnet' : 'Harbinger',
+  SWITCH_TO_NETWORK_URL:
+    CHAIN_ID == HARBINGER_CHAIN_ID
+      ? 'https://koinosblocks.com'
+      : 'https://harbinger.koinosblocks.com',
 };
