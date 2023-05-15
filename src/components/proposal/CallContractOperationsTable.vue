@@ -7,34 +7,26 @@
       <tr>
         <th>Type</th>
         <th>Contract ID</th>
-        <th>System contract</th>
+        <th>Entrypoint</th>
+        <th>Args</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="operation in operations" :key="operation">
-        <td>{{ Object.keys(operation)[0] }}</td>
-        <td>
-          <router-link
-            :to="
-              walletLink(
-                decodeAddress(operation[Object.keys(operation)[0]].contract_id),
-              )
-            "
-          >
-            {{ decodeAddress(operation?.set_system_contract?.contract_id) }}
-          </router-link>
-        </td>
-        <td>
-          {{ operation[Object.keys(operation)[0]].system_contract ?? 'false' }}
-        </td>
-      </tr>
+      <OperationRow
+        v-for="operation in operations"
+        :key="operation.id"
+        :operation="operation"
+      />
     </tbody>
   </table>
 </template>
 <script lang="ts">
 import { utils } from 'koilib';
+import OperationRow from '../transaction/OperationRow.vue';
 
 export default {
+  components: { OperationRow },
   props: {
     operations: {
       type: Array,

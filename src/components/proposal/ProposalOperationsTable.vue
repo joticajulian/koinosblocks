@@ -4,12 +4,19 @@
       <va-card-title>Operations</va-card-title>
       <va-card-content>
         <SetSystemCallTable
+          v-if="setSystemCallOperations().length > 0"
           :operations="setSystemCallOperations()"
           :loading="loading"
         />
         <SetSystemContractTable
+          v-if="setSystemContractOperations().length > 0"
           :loading="loading"
           :operations="setSystemContractOperations()"
+        />
+        <CallContractOperationsTable
+          v-if="callContractsOperations().length > 0"
+          :loading="loading"
+          :operations="callContractsOperations()"
         />
       </va-card-content>
     </va-card>
@@ -18,8 +25,14 @@
 <script lang="ts">
 import SetSystemContractTable from './SetSystemContractTable.vue';
 import SetSystemCallTable from './SetSystemCallTable.vue';
+import CallContractOperationsTable from './CallContractOperationsTable.vue';
+import { utils } from 'koilib';
 export default {
-  components: { SetSystemContractTable, SetSystemCallTable },
+  components: {
+    CallContractOperationsTable,
+    SetSystemContractTable,
+    SetSystemCallTable,
+  },
   props: {
     operations: {
       type: Array,
@@ -38,6 +51,21 @@ export default {
         props.operations.filter(
           (operation: any) => operation.set_system_contract,
         ),
+      callContractsOperations: () => {
+        const filtered = props.operations.filter(
+          (operation: any) => operation.call_contract,
+        );
+        return filtered.map((operation) => {
+          return {
+            call_contract: {
+              ...operation.call_contract,
+              contract_id: utils.encodeBase58(
+                utils.decodeBase64(operation.call_contract.contract_id),
+              ),
+            },
+          };
+        });
+      },
     };
   },
 };

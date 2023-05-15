@@ -60,8 +60,7 @@ export default {
   },
   methods: {
     walletLink: (address: string) => `/address/${address}`,
-    decodeAddress: (address: string) =>
-      utils.encodeBase58(utils.decodeBase64url(address)),
+    decodeAddress: (address: string) => utils.decodeBase64url(address),
   },
 };
 

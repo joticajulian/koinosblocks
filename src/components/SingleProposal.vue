@@ -75,7 +75,7 @@ export default {
     const getGovernanceProto = async () => {
       try {
         const { meta } = await client.contractMetaStore.getContractMeta(
-          '1NsnpSsXJDgPTFgFXRiP8F3Acg9gj6VjUi',
+          '19qj51eTbSFJYU7ZagudkpxPgNSzPMfdPX',
         );
         const abi = JSON.parse(meta.abi);
         return koinosPbToProto.convert(abi.types);
@@ -112,7 +112,7 @@ export default {
       );
 
       const { result } = await client.chain.readContract(
-        '1NsnpSsXJDgPTFgFXRiP8F3Acg9gj6VjUi',
+        '19qj51eTbSFJYU7ZagudkpxPgNSzPMfdPX',
         0xc66013ad,
         args,
       );
@@ -142,7 +142,7 @@ export default {
       proposalId,
       loading,
       details,
-      toProposalId: (root: string) =>
+      toPropoaslId: (root: string) =>
         `0x${utils.toHexString(utils.decodeBase64(root))}`,
     };
   },
