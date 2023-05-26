@@ -6,13 +6,18 @@ export interface KondorAccount {
   address: string;
 }
 
-const accounts = ref<KondorAccount[]>([]);
+const storageAccounts = localStorage.getItem('kondorAccounts');
+
+const accounts = ref<KondorAccount[]>(
+  storageAccounts ? JSON.parse(storageAccounts) : [],
+);
 
 export function useKondor() {
   const requestAccounts = async () => {
     try {
       accounts.value =
         (await kondor.getAccounts()) as unknown as KondorAccount[]; // Types in kondor-js are wrong
+      localStorage.setItem('kondorAccounts', JSON.stringify(accounts.value));
     } catch (e) {
       console.error('error', e);
     }
@@ -22,5 +27,9 @@ export function useKondor() {
     accounts,
     requestAccounts,
     getSigner: (signerAddress: string) => kondor.getSigner(signerAddress),
+    logout: () => {
+      localStorage.removeItem('kondorAccounts');
+      accounts.value = [];
+    },
   };
 }

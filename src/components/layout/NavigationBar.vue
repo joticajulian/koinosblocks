@@ -28,6 +28,9 @@
       <va-navbar-item>
         <ApiInput />
       </va-navbar-item>
+      <va-navbar-item>
+        <KondorConnection />
+      </va-navbar-item>
     </template>
   </va-navbar>
 </template>
@@ -35,10 +38,11 @@
 <script>
 import ApiInput from './ApiInput.vue';
 import { config } from '../../config';
+import KondorConnection from './KondorConnection.vue';
 
 export default {
   name: 'NavigationBar',
-  components: { ApiInput },
+  components: { KondorConnection, ApiInput },
   setup() {
     const switchToNetworkName = config.SWITCH_TO_NETWORK_NAME;
     const switchToNetworkUrl = config.SWITCH_TO_NETWORK_URL;

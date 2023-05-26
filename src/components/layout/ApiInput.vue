@@ -9,7 +9,6 @@
       @select="updateClientApi(url)"
       @create-new="addNewNodeUrl"
     />
-    <va-button size="medium" @click="updateClientApi(url)"> Set </va-button>
   </div>
 </template>
 
