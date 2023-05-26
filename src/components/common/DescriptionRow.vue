@@ -1,6 +1,9 @@
 <template>
   <dl>
-    <dt>{{ description }}</dt>
+    <dt v-if="tooltip">
+      <va-popover :message="tooltip">{{ description }}</va-popover>
+    </dt>
+    <dt v-else>{{ description }}</dt>
     <dd>
       <RichLink
         v-for="(line, index) in lines"
@@ -25,6 +28,10 @@ export default {
   name: 'DescriptionRow',
   components: { RichLink },
   props: {
+    tooltip: {
+      type: String,
+      required: false,
+    },
     description: {
       type: String,
       required: true,

@@ -8,12 +8,16 @@
           :data="details.vote_start_height ?? '0'"
         />
         <DescriptionRow
+          description="Vote end height"
+          :data="voteHeightEnd(details.vote_start_height ?? 0)"
+        />
+        <DescriptionRow
           description="Vote threshold"
           :data="details.vote_threshold ?? '0'"
         />
         <DescriptionRow
           description="Vote tally"
-          :data="details.vote_tally ?? '0'"
+          :data="votesTallyText(details.vote_tally, details.status)"
         />
         <DescriptionRow
           description="Shall authorize"
@@ -44,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useClient } from '../composable/useClient';
 import * as koinosPbToProto from '@roamin/koinos-pb-to-proto';
 import * as protobuf from 'protobufjs';
@@ -54,9 +58,16 @@ import base64url from 'base64url';
 import RawData from './common/RawData.vue';
 import DescriptionRow from './common/DescriptionRow.vue';
 import ProposalOperationsTable from './proposal/ProposalOperationsTable.vue';
+import { useNameService } from '../composable/useNameService';
+import headBlock from './block/HeadBlock.vue';
 
 export default {
   name: 'SingleProposal',
+  computed: {
+    headBlock() {
+      return headBlock;
+    },
+  },
   components: { ProposalOperationsTable, DescriptionRow, RawData },
   props: {
     id: {
@@ -69,13 +80,15 @@ export default {
     const loading = ref(true);
     const root = ref<Root | null>(null);
     const details = ref<any | null>(null);
+    const headBlock = ref<number | null>(null);
 
     const { client } = useClient();
+    const { getSystemContractAddress } = useNameService();
 
-    const getGovernanceProto = async () => {
+    const getGovernanceProto = async (governance: string) => {
       try {
         const { meta } = await client.contractMetaStore.getContractMeta(
-          '19qj51eTbSFJYU7ZagudkpxPgNSzPMfdPX',
+          governance,
         );
         const abi = JSON.parse(meta.abi);
         return koinosPbToProto.convert(abi.types);
@@ -96,7 +109,7 @@ export default {
       return root;
     };
 
-    const getProposal = async () => {
+    const getProposal = async (address: string) => {
       const argumentType = root.value!.lookup(
         'koinos.contracts.governance.get_proposal_by_id_arguments',
       );
@@ -112,7 +125,7 @@ export default {
       );
 
       const { result } = await client.chain.readContract(
-        '19qj51eTbSFJYU7ZagudkpxPgNSzPMfdPX',
+        address,
         0xc66013ad,
         args,
       );
@@ -124,26 +137,44 @@ export default {
 
     const load = async () => {
       loading.value = true;
-      const protos = await getGovernanceProto();
+      const governanceContractAddress = await getSystemContractAddress(
+        'governance',
+      );
+      const protos = await getGovernanceProto(governanceContractAddress);
       root.value = parseProtos(protos!);
-      await getProposal();
+      await getProposal(governanceContractAddress);
+      const { head_topology } = await client.chain.getHeadInfo();
+      headBlock.value = Number(head_topology.height);
       loading.value = false;
     };
 
-    load()
-      .then(() => {
-        console.log('done');
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    const votesPassed = computed(() => {
+      return headBlock.value - Number(details?.value?.vote_start_height);
+    });
+
+    const votesPercentage = computed(() => {
+      return (
+        (Number(details?.value?.vote_tally) / Number(votesPassed.value)) *
+        100
+      ).toFixed(0);
+    });
+
+    const votesTallyText = (tally: string, status: string) => {
+      if (status == 'pending') return '0';
+      return `${tally} out of ${votesPassed.value} (${votesPercentage.value}%)`;
+    };
+
+    load().catch(console.error);
 
     return {
       proposalId,
       loading,
       details,
-      toPropoaslId: (root: string) =>
-        `0x${utils.toHexString(utils.decodeBase64(root))}`,
+      headBlock,
+      voteHeightEnd: (height: string | number) => Number(height) + 201600 * 2, // two weeks voting period with 3 second block target
+      votesPassed,
+      votesPercentage,
+      votesTallyText,
     };
   },
 };
