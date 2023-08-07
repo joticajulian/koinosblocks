@@ -2,9 +2,7 @@ import { reactive } from 'vue';
 import { useClient } from './useClient';
 import { useContract } from './useContract';
 import { utils } from 'koilib';
-
-// const mainnetChainid = 'EiBZK_GGVP0H_fXVAM3j6EAuz3-B-l3ejxRSewi7qIBfSA==';
-const testnetChainId = 'EiAAKqFi-puoXnuJTdn7qBGGJa8yd-dcS2P0ciODe4wupQ==';
+import { config } from '../config';
 
 export function useNameService() {
   const { fetchContractMeta, encodeArgs, decodeResult } = useContract();
@@ -12,8 +10,8 @@ export function useNameService() {
   const getNameServiceAddress = async (): Promise<string> => {
     const { client } = useClient();
     const { chain_id } = await client.chain.getChainId();
-    return chain_id === testnetChainId
-      ? '1AM1c73tDNTc24KYqYvSHmoZ2C7oe4DZhh'
+    return chain_id === config.HARBINGER_CHAIN_ID
+      ? '13NQnca5chwpKm4ebHbvgvJmXrsSCTayDJ'
       : '19WxDJ9Kcvx4VqQFkpwVmwVEy1hMuwXtQE';
   };
 
