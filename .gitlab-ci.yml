@@ -40,7 +40,7 @@ build-harbinger:
   extends: .build-template
   variables:
     IMAGE_TAG: "harbinger"
-    CHAIN_ID: "EiAAKqFi-puoXnuJTdn7qBGGJa8yd-dcS2P0ciODe4wupQ=="
+    CHAIN_ID: "EiBncD4pKRIQWco_WRqo5Q-xnXR7JuO3PtZv983mKdKHSQ=="
 
 deploy:
   stage: deploy
