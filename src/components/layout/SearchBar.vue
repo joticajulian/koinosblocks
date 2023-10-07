@@ -4,7 +4,7 @@
       v-model="input"
       :loading="loading"
       class="search"
-      placeholder="Search by block, transaction, address or KAP name"
+      placeholder="Search by block, transaction, address, KAP or @nickname"
       :error="error"
       :error-messages="errorMessage"
       @keyup.enter="search()"
@@ -22,6 +22,7 @@ import { ref } from 'vue';
 import { useClient } from '../../composable/useClient';
 import { utils } from 'koilib';
 import { useKAP } from '../../composable/useKAP';
+import { useNicknames } from '../../composable/useNicknames';
 
 export default {
   setup() {
@@ -31,6 +32,7 @@ export default {
     const loading = ref(false);
     const { client } = useClient();
     const { getKAPOwnerAddress } = useKAP();
+    const { getNicknameOwner } = useNicknames();
 
     const isTransactionId = (input: string) => {
       if (!input.startsWith('0x1220') || input.length !== 70) {
@@ -71,10 +73,7 @@ export default {
       try {
         const { transactions } =
           await client.transactionStore.getTransactionsById([input.value]);
-        if (transactions && transactions.length > 0) {
-          return true;
-        }
-        return false;
+        return transactions && transactions.length > 0;
       } catch (e) {
         return false;
       }
@@ -83,6 +82,14 @@ export default {
     const KAPExists = async (address: string): string | undefined => {
       try {
         return await getKAPOwnerAddress(address);
+      } catch (e) {
+        return;
+      }
+    };
+
+    const nicknameExists = async (nickname: string): string | undefined => {
+      try {
+        return await getNicknameOwner(nickname);
       } catch (e) {
         return;
       }
@@ -127,7 +134,8 @@ export default {
           error.value = true;
         }
       } else {
-        const address = await KAPExists(input.value);
+        const address =
+          (await KAPExists(input.value)) || (await nicknameExists(input.value));
         if (address) {
           gotoLink('address', address);
         } else {

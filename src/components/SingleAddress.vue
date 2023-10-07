@@ -3,7 +3,14 @@
     <va-card class="offset--sm row ma-3" stripe stripe-color="success">
       <va-card-title>
         <p class="mr-3">Wallet details</p>
-        <div class="kaps-list" v-if="kaps.length">
+        <div v-if="nicknames.length" class="badges-list">
+          <span v-for="nickname in nicknames" :key="nickname" class="mr-3">
+            <va-popover message="Nickname" color="info" class="popover">
+              <va-badge :text="`@${nickname}`" color="info" />
+            </va-popover>
+          </span>
+        </div>
+        <div v-if="kaps.length" class="badges-list">
           <a
             v-for="kap in kaps"
             :key="kap"
@@ -52,6 +59,7 @@ import { useClient } from '../composable/useClient';
 import TransactionHistory from './address/TransactionHistory.vue';
 import { useNameService } from '../composable/useNameService';
 import { useKAP } from '../composable/useKAP';
+import { useNicknames } from '../composable/useNicknames';
 
 interface TokenBalance {
   amount: number;
@@ -70,6 +78,7 @@ export default defineComponent({
   async setup(props) {
     const tokens = ref<string[]>([]);
     const kaps = ref<string[]>([]);
+    const nicknames = ref<string[]>([]);
 
     const meta = ref<ContractMeta>({ root: null, abi: null, protos: null });
     const loading = ref(true);
@@ -80,6 +89,7 @@ export default defineComponent({
     const { fetchContractMeta } = useContract();
     const { getSystemContractAddress } = useNameService();
     const { getKAPNames } = useKAP();
+    const { getNicknames } = useNicknames();
 
     const VAPOR_TOKEN_ADDRESS = '1KTasVrqvMBofMANKMCT3HMya16sfZPLFB';
 
@@ -131,6 +141,15 @@ export default defineComponent({
       }
     };
 
+    const getNicknamesForAddress = async (address: string) => {
+      try {
+        return await getNicknames(address);
+      } catch (e) {
+        console.error(e);
+        return [];
+      }
+    };
+
     const refreshData = async (address: string) => {
       try {
         loading.value = true;
@@ -138,6 +157,7 @@ export default defineComponent({
         meta.value = await fetchContractMeta(address);
         tokens.value = await getTokensAddresses();
         kaps.value = await getKoinosAddressProtocolNames(address);
+        nicknames.value = await getNicknamesForAddress(address);
         await getMana(address);
         await Promise.all(
           tokens.value.map(async (token) => getTokenValue(token, address)),
@@ -164,6 +184,7 @@ export default defineComponent({
       isEmpty: computed(() => !balances.value.length),
       kapLink: (kap: string) => `https://kap.plus/${kap}`,
       kaps,
+      nicknames,
     };
   },
 });
@@ -173,7 +194,7 @@ export default defineComponent({
 a {
   --va-popover-content-font-size: 0.65rem;
 }
-.kaps-list {
+.badges-list {
   display: flex;
   flex-wrap: wrap;
   a {
