@@ -23,6 +23,6 @@ export const config = {
       : 'https://harbinger.koinosblocks.com',
   NICKNAMES_CONTRACT_ID:
     CHAIN_ID === HARBINGER_CHAIN_ID
-      ? '1AuJQxqqyBZXqqugTQZzXRVRmEYJtsMYQ8'
+      ? '1KXsC2bSnKAMAZ51gq3xxKBo74a7cDJjkR'
       : '1KD9Es7LBBjA1FY3ViCgQJ7e6WH1ipKbhz',
 };
