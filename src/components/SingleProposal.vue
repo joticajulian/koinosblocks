@@ -159,8 +159,8 @@ export default {
       ).toFixed(0);
     });
 
-    const votesTallyText = (tally: string, status: string) => {
-      if (status == 'pending') return '0';
+    const votesTallyText = (tally: string, status?: string) => {
+      if (!status || status === 'pending') return '0';
       return `${tally} out of ${votesPassed.value} (${votesPercentage.value}%)`;
     };
 
